@@ -21,6 +21,13 @@ const support = {
       url: '/empresas',
       icon: icons.ChromeOutlined
     },
+        {
+      id: 'caf',
+      title: 'Caf Grid',
+      type: 'item',
+      url: '/caf',
+      icon: icons.ChromeOutlined
+    },
   /*  {
       id: 'documentation',
       title: 'Documentation',

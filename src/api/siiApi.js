@@ -19,3 +19,29 @@ export const getComunas = async () => {
 
   return response.data;
 };
+
+// ==============================
+// CAF
+// ==============================
+
+export const getCafFiles = async () => {
+  const response = await api.post('/dte/getCafFiles');
+
+  return response.data;
+};
+
+export const uploadCaf = async (formData) => {
+  const response = await api.post('/dte/uploadCaf', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+
+  return response.data;
+};
+
+export const disableCaf = async (id) => {
+  const response = await api.put(`/dte/disableCaf/${id}`);
+
+  return response.data;
+};

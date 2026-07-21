@@ -37,9 +37,9 @@ export default defineConfig(({ mode }) => {
        VitePWA({  // congigure PWA plugin
             registerType: 'autoUpdate',
             manifest: {
-              name: 'Hotel Maintenance App',
-              short_name: 'HotelApp',
-              description: 'Hotel maintenance and work orders system',
+              name: 'Facturador SII',
+              short_name: 'Facturador SII',
+              description: 'Sistema de facturación para el SII',
               theme_color: '#0f172a',
               background_color: '#ffffff',
               display: 'standalone',

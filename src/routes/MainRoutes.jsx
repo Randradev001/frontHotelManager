@@ -4,16 +4,12 @@ import { lazy } from 'react';
 import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
 
-// render- Dashboard
+// render - Dashboard
 const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
-
-// render - color
-const Color = Loadable(lazy(() => import('pages/component-overview/color')));
-const Typography = Loadable(lazy(() => import('pages/component-overview/typography')));
-const Shadow = Loadable(lazy(() => import('pages/component-overview/shadows')));
 
 // render - sample page
 const Empresas = Loadable(lazy(() => import('pages/maestros/empresas')));
+const CafGrid = Loadable(lazy(() => import('pages/maestros/cafGrid')));
 
 // ==============================|| MAIN ROUTING ||============================== //
 
@@ -34,21 +30,13 @@ const MainRoutes = {
         }
       ]
     },
-   /* {
-      path: 'typography',
-      element: <Typography />
-    },
-    {
-      path: 'color',
-      element: <Color />
-    },
-    {
-      path: 'shadow',
-      element: <Shadow />
-    }, */
     {
       path: 'empresas',
       element: <Empresas />
+    },
+    {
+      path: 'caf',
+      element: <CafGrid />
     }
   ]
 };

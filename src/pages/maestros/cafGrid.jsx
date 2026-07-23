@@ -27,6 +27,7 @@ import { getCompanies } from 'api/siiApi';
 import { getCafFiles, uploadCaf } from 'api/siiApi';
 
 // project
+import ListExportButtons from 'components/ListExportButtons';
 import CafForm from './cafForm';
 
 const CafGrid = () => {
@@ -251,6 +252,28 @@ const CafGrid = () => {
     }
   ];
 
+  const exportColumns = columns
+    .filter((column) => column.field !== 'actions')
+    .map((column) => {
+      if (column.field === 'Activo') {
+        return { ...column, exportValue: (row) => (row.Activo ? 'Activo' : 'Inactivo') };
+      }
+
+      if (column.field === 'ValidationStatus') {
+        return { ...column, exportValue: (row) => getValidationChip(row.ValidationStatus).label };
+      }
+
+      if (column.field === 'FechaAutorizacion' || column.field === 'FechaVencimiento') {
+        return { ...column, exportValue: (row) => formatDate(row[column.field]) };
+      }
+
+      return column;
+    });
+
+  const handleExportNotify = ({ message, severity = 'info' }) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
   return (
     <>
       <Box>
@@ -263,9 +286,19 @@ const CafGrid = () => {
         >
           <Typography variant="h5">Listado de CAF</Typography>
 
-          <Button variant="contained" startIcon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
-            Cargar CAF
-          </Button>
+          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+            <ListExportButtons
+              title="Listado de CAF"
+              rows={rows}
+              columns={exportColumns}
+              disabled={loadingCafFiles || rows.length === 0}
+              onNotify={handleExportNotify}
+            />
+
+            <Button variant="contained" startIcon={<PlusOutlined />} onClick={() => setOpenForm(true)}>
+              Cargar CAF
+            </Button>
+          </Stack>
         </Stack>
 
         {errorCafFiles && (

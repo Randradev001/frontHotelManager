@@ -37,9 +37,9 @@ export default defineConfig(({ mode }) => {
        VitePWA({  // congigure PWA plugin
             registerType: 'autoUpdate',
             manifest: {
-              name: 'Facturador SII',
-              short_name: 'Facturador SII',
-              description: 'Sistema de facturación para el SII',
+              name: 'Conex',
+              short_name: 'Conex',
+              description: 'Sistema Conex para packing, maestros y despacho de fruta',
               theme_color: '#0f172a',
               background_color: '#ffffff',
               display: 'standalone',

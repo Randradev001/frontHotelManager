@@ -1,6 +1,5 @@
 // material-ui
 import List from '@mui/material/List';
-import Link from '@mui/material/Link';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
@@ -17,39 +16,35 @@ import UnorderedListOutlined from '@ant-design/icons/UnorderedListOutlined';
 export default function SettingTab() {
   return (
     <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32 } }}>
-      <Link underline="none" sx={{ color: 'inherit' }} target="_blank" href="https://codedthemes.support-hub.io/">
-        <ListItemButton>
-          <ListItemIcon>
-            <QuestionCircleOutlined />
-          </ListItemIcon>
-          <ListItemText primary="Support" />
-        </ListItemButton>
-      </Link>
+      <ListItemButton>
+        <ListItemIcon>
+          <QuestionCircleOutlined />
+        </ListItemIcon>
+        <ListItemText primary="Ayuda Conex" />
+      </ListItemButton>
       <ListItemButton>
         <ListItemIcon>
           <UserOutlined />
         </ListItemIcon>
-        <ListItemText primary="Account Settings" />
+        <ListItemText primary="Configuracion de cuenta" />
       </ListItemButton>
       <ListItemButton>
         <ListItemIcon>
           <LockOutlined />
         </ListItemIcon>
-        <ListItemText primary="Privacy Center" />
+        <ListItemText primary="Seguridad" />
       </ListItemButton>
-      <Link underline="none" style={{ color: 'inherit' }} target="_blank" href="https://codedthemes.support-hub.io/">
-        <ListItemButton>
-          <ListItemIcon>
-            <CommentOutlined />
-          </ListItemIcon>
-          <ListItemText primary="Feedback" />
-        </ListItemButton>
-      </Link>
+      <ListItemButton>
+        <ListItemIcon>
+          <CommentOutlined />
+        </ListItemIcon>
+        <ListItemText primary="Comentarios" />
+      </ListItemButton>
       <ListItemButton>
         <ListItemIcon>
           <UnorderedListOutlined />
         </ListItemIcon>
-        <ListItemText primary="History" />
+        <ListItemText primary="Historial" />
       </ListItemButton>
     </List>
   );

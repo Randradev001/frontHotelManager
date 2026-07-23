@@ -1,9 +1,10 @@
 // material-ui
 import Button from '@mui/material/Button';
 import CardMedia from '@mui/material/CardMedia';
-import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
+
+import { Link as RouterLink } from 'react-router-dom';
 
 // project import
 import MainCard from 'components/MainCard';
@@ -20,14 +21,14 @@ export default function NavCard() {
       <Stack alignItems="center" spacing={2.5}>
         <CardMedia component="img" image={avatar} sx={{ width: 112 }} />
         <Stack alignItems="center">
-          <Typography variant="h5">Ayuda</Typography>
+          <Typography variant="h5">Conex</Typography>
           <Typography variant="h6" color="secondary">
-            Ver documetacion sistema
+            Maestros base de migracion
           </Typography>
         </Stack>
         <AnimateButton>
-          <Button component={Link} target="_blank" href="https://mantisdashboard.com" variant="contained" color="success" size="small">
-            ver
+          <Button component={RouterLink} to="/maestros-gx/empresas" variant="contained" color="success" size="small">
+            Ver maestros
           </Button>
         </AnimateButton>
       </Stack>

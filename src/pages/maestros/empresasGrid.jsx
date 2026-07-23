@@ -24,6 +24,7 @@ import { getCompanies, createCompany, getComunas } from 'api/siiApi';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
+import ListExportButtons from 'components/ListExportButtons';
 
 const FactCompaniesGrid = () => {
 const queryClient = useQueryClient();
@@ -84,9 +85,7 @@ const handleDeleteCompany = (company) => {
 
 
   const {
-    data: comunas = [],
-    isLoading: loadingComunas,
-    isError: errorComunas
+    data: comunas = []
     } = useQuery({
     queryKey: ['comunas'],
     queryFn: getComunas
@@ -94,8 +93,7 @@ const handleDeleteCompany = (company) => {
 
 const {
   data,
-  isLoading: loadingRows,
-  isError: errorRows
+  isLoading: loadingRows
 } = useQuery({
   queryKey: ['companies'],
   queryFn: getCompanies
@@ -179,6 +177,19 @@ console.log(rows);
     )
   }
 ];
+
+const exportColumns = columns
+  .filter((column) => column.field !== 'actions')
+  .map((column) =>
+    column.field === 'ComActiva'
+      ? { ...column, exportValue: (row) => (row.ComActiva ? 'Activa' : 'Inactiva') }
+      : column
+  );
+
+const handleExportNotify = ({ message, severity = 'info' }) => {
+  setSnackbar({ open: true, message, severity });
+};
+
   return (
     <><Box>
           <Stack
@@ -190,9 +201,19 @@ console.log(rows);
           >
               <Typography variant="h5">Listado de empresas</Typography>
 
-              <Button variant="contained" startIcon={<PlusOutlined />} onClick={() => handleOpenForm()}>
-                  Nueva Empresa
-              </Button>
+              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
+                <ListExportButtons
+                  title="Listado de empresas"
+                  rows={rows}
+                  columns={exportColumns}
+                  disabled={loadingRows || rows.length === 0}
+                  onNotify={handleExportNotify}
+                />
+
+                <Button variant="contained" startIcon={<PlusOutlined />} onClick={() => handleOpenForm()}>
+                    Nueva Empresa
+                </Button>
+              </Stack>
           </Stack>
 
           <Box sx={{ height: 520, width: '100%' }}>

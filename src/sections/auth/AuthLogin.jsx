@@ -1,151 +1,173 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-// material-ui
+import Alert from '@mui/material/Alert';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
+import CircularProgress from '@mui/material/CircularProgress';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FormHelperText from '@mui/material/FormHelperText';
 import Grid from '@mui/material/Grid';
-import Link from '@mui/material/Link';
 import InputAdornment from '@mui/material/InputAdornment';
 import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
 import OutlinedInput from '@mui/material/OutlinedInput';
+import Select from '@mui/material/Select';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 
-// third-party
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 
-// project imports
+import { useAuth } from 'contexts/AuthContext';
 import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
-
-// assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
 
-// ============================|| JWT - LOGIN ||============================ //
-
 export default function AuthLogin({ isDemo = false }) {
-  const [checked, setChecked] = React.useState(false);
-
+  const [remember, setRemember] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleMouseDownPassword = (event) => {
-    event.preventDefault();
-  };
+  const [companies, setCompanies] = React.useState([]);
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   return (
-    <>
-      <Formik
-        initialValues={{
-          email: 'info@codedthemes.com',
-          password: '123456',
-          submit: null
-        }}
-        validationSchema={Yup.object().shape({
-          email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
-          password: Yup.string()
-            .required('Password is required')
-            .test('no-leading-trailing-whitespace', 'Password cannot start or end with spaces', (value) => value === value.trim())
-            .max(10, 'Password must be less than 10 characters')
-        })}
-      >
-        {({ errors, handleBlur, handleChange, touched, values }) => (
-          <form noValidate>
-            <Grid container spacing={3}>
+    <Formik
+      initialValues={{ login: '', password: '', empCod: '', submit: null }}
+      validationSchema={Yup.object({
+        login: Yup.string().trim().max(10, 'El usuario admite hasta 10 caracteres').required('El usuario es obligatorio'),
+        password: Yup.string().max(128, 'La clave es demasiado extensa').required('La clave es obligatoria'),
+        empCod: companies.length ? Yup.number().required('Seleccione una empresa') : Yup.mixed()
+      })}
+      onSubmit={async (values, { setErrors, setSubmitting }) => {
+        try {
+          const result = await login({ ...values, remember });
+          if (result.requiresCompany) {
+            setCompanies(result.companies);
+            return;
+          }
+          navigate(location.state?.from?.pathname || '/', { replace: true });
+        } catch (error) {
+          setErrors({ submit: error.response?.data?.message || 'No fue posible iniciar sesion.' });
+        } finally {
+          setSubmitting(false);
+        }
+      }}
+    >
+      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+        <form noValidate onSubmit={handleSubmit}>
+          <Grid container spacing={3}>
+            {errors.submit && (
               <Grid size={12}>
-                <Stack sx={{ gap: 1 }}>
-                  <InputLabel htmlFor="email-login">Email Address</InputLabel>
-                  <OutlinedInput
-                    id="email-login"
-                    type="email"
-                    value={values.email}
-                    name="email"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    placeholder="Enter email address"
-                    fullWidth
-                    error={Boolean(touched.email && errors.email)}
-                  />
-                </Stack>
-                {touched.email && errors.email && (
-                  <FormHelperText error id="standard-weight-helper-text-email-login">
-                    {errors.email}
-                  </FormHelperText>
-                )}
+                <Alert severity="error">{errors.submit}</Alert>
               </Grid>
-              <Grid size={12}>
-                <Stack sx={{ gap: 1 }}>
-                  <InputLabel htmlFor="password-login">Password</InputLabel>
-                  <OutlinedInput
-                    fullWidth
-                    error={Boolean(touched.password && errors.password)}
-                    id="-password-login"
-                    type={showPassword ? 'text' : 'password'}
-                    value={values.password}
-                    name="password"
-                    onBlur={handleBlur}
-                    onChange={handleChange}
-                    endAdornment={
-                      <InputAdornment position="end">
-                        <IconButton
-                          aria-label="toggle password visibility"
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword}
-                          edge="end"
-                          color="secondary"
-                        >
-                          {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-                        </IconButton>
-                      </InputAdornment>
-                    }
-                    placeholder="Enter password"
-                  />
-                </Stack>
-                {touched.password && errors.password && (
-                  <FormHelperText error id="standard-weight-helper-text-password-login">
-                    {errors.password}
-                  </FormHelperText>
-                )}
-              </Grid>
-              <Grid sx={{ mt: -1 }} size={12}>
-                <Stack direction="row" sx={{ gap: 2, alignItems: 'baseline', justifyContent: 'space-between' }}>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={checked}
-                        onChange={(event) => setChecked(event.target.checked)}
-                        name="checked"
-                        color="primary"
-                        size="small"
-                      />
-                    }
-                    label={<Typography variant="h6">Keep me sign in</Typography>}
-                  />
-                  <Link variant="h6" component={RouterLink} to="#" color="text.primary">
-                    Forgot Password?
-                  </Link>
-                </Stack>
-              </Grid>
-              <Grid size={12}>
-                <AnimateButton>
-                  <Button fullWidth size="large" variant="contained" color="primary">
-                    Login
-                  </Button>
-                </AnimateButton>
-              </Grid>
+            )}
+            <Grid size={12}>
+              <Stack sx={{ gap: 1 }}>
+                <InputLabel htmlFor="user-login">Usuario</InputLabel>
+                <OutlinedInput
+                  id="user-login"
+                  name="login"
+                  value={values.login}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  placeholder="Ingrese su usuario"
+                  autoComplete="username"
+                  disabled={companies.length > 0}
+                  fullWidth
+                  error={Boolean(touched.login && errors.login)}
+                />
+              </Stack>
+              {touched.login && errors.login && <FormHelperText error>{errors.login}</FormHelperText>}
             </Grid>
-          </form>
-        )}
-      </Formik>
-    </>
+            <Grid size={12}>
+              <Stack sx={{ gap: 1 }}>
+                <InputLabel htmlFor="password-login">Clave</InputLabel>
+                <OutlinedInput
+                  id="password-login"
+                  name="password"
+                  value={values.password}
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Ingrese su clave"
+                  autoComplete="current-password"
+                  disabled={companies.length > 0}
+                  fullWidth
+                  error={Boolean(touched.password && errors.password)}
+                  endAdornment={
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label={showPassword ? 'Ocultar clave' : 'Mostrar clave'}
+                        onClick={() => setShowPassword((visible) => !visible)}
+                        onMouseDown={(event) => event.preventDefault()}
+                        edge="end"
+                        color="secondary"
+                        disabled={companies.length > 0}
+                      >
+                        {showPassword ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                      </IconButton>
+                    </InputAdornment>
+                  }
+                />
+              </Stack>
+              {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
+            </Grid>
+            {companies.length > 0 && (
+              <Grid size={12}>
+                <Stack sx={{ gap: 1 }}>
+                  <InputLabel id="company-login-label">Empresa</InputLabel>
+                  <Select
+                    labelId="company-login-label"
+                    id="company-login"
+                    name="empCod"
+                    value={values.empCod}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    displayEmpty
+                    error={Boolean(touched.empCod && errors.empCod)}
+                  >
+                    <MenuItem value="" disabled>
+                      Seleccione una empresa
+                    </MenuItem>
+                    {companies.map((company) => (
+                      <MenuItem key={company.empCod} value={company.empCod}>
+                        {company.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </Stack>
+                {touched.empCod && errors.empCod && <FormHelperText error>{errors.empCod}</FormHelperText>}
+              </Grid>
+            )}
+            <Grid sx={{ mt: -1 }} size={12}>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={remember}
+                    onChange={(event) => setRemember(event.target.checked)}
+                    color="primary"
+                    size="small"
+                    disabled={companies.length > 0}
+                  />
+                }
+                label={<Typography variant="body2">Mantener la sesion iniciada</Typography>}
+              />
+            </Grid>
+            <Grid size={12}>
+              <AnimateButton>
+                <Button fullWidth size="large" type="submit" variant="contained" disabled={isSubmitting}>
+                  {isSubmitting ? <CircularProgress size={22} color="inherit" /> : companies.length ? 'Ingresar a la empresa' : 'Ingresar'}
+                </Button>
+              </AnimateButton>
+            </Grid>
+          </Grid>
+        </form>
+      )}
+    </Formik>
   );
 }
 

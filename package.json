@@ -1,11 +1,11 @@
 {
-  "name": "mantis-material-free-react",
+  "name": "conex-frontend",
   "version": "2.1.0",
-  "homepage": "https://mantisdashboard.com/free",
+  "homepage": "/free",
   "author": {
-    "name": "CodedThemes",
-    "email": "codedthemes@gmail.com",
-    "url": "https://codedthemes.com/"
+    "name": "Conex",
+    "email": "soporte@conex.cl",
+    "url": "/free"
   },
   "scripts": {
     "start": "vite",
@@ -68,8 +68,8 @@
   "devDependencies": {
     "@eslint/compat": "2.0.2",
     "@eslint/eslintrc": "3.3.3",
-    "@eslint/js": "10.0.1",
-    "eslint": "10.0.0",
+    "@eslint/js": "^9.39.5",
+    "eslint": "^9.39.5",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-prettier": "5.5.5",

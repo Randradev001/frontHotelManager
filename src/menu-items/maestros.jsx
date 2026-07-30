@@ -3,7 +3,6 @@ import AppstoreOutlined from '@ant-design/icons/AppstoreOutlined';
 import BranchesOutlined from '@ant-design/icons/BranchesOutlined';
 import CalendarOutlined from '@ant-design/icons/CalendarOutlined';
 import InboxOutlined from '@ant-design/icons/InboxOutlined';
-import TagsOutlined from '@ant-design/icons/TagsOutlined';
 import TeamOutlined from '@ant-design/icons/TeamOutlined';
 
 const icons = {
@@ -12,13 +11,12 @@ const icons = {
   BranchesOutlined,
   CalendarOutlined,
   InboxOutlined,
-  TagsOutlined,
   TeamOutlined
 };
 
 const maestros = {
   id: 'maestros-gx-group',
-  title: 'Conex',
+  title: 'CONEX-CO',
   type: 'group',
   children: [
     {
@@ -49,25 +47,11 @@ const maestros = {
           icon: icons.InboxOutlined
         },
         {
-          id: 'gx-categorias-envase',
-          title: 'Categorias de Envase',
-          type: 'item',
-          url: '/maestros-gx/categorias-envase',
-          icon: icons.TagsOutlined
-        },
-        {
           id: 'gx-especies',
           title: 'Especies',
           type: 'item',
           url: '/maestros-gx/especies',
           icon: icons.AppstoreOutlined
-        },
-        {
-          id: 'gx-variedades',
-          title: 'Variedades',
-          type: 'item',
-          url: '/maestros-gx/variedades',
-          icon: icons.BranchesOutlined
         },
         {
           id: 'gx-productores',
@@ -77,18 +61,25 @@ const maestros = {
           icon: icons.TeamOutlined
         },
         {
-          id: 'gx-cuarteles',
-          title: 'Cuarteles',
+          id: 'gx-clientes',
+          title: 'Clientes',
           type: 'item',
-          url: '/maestros-gx/cuarteles',
+          url: '/maestros-gx/clientes',
+          icon: icons.TeamOutlined
+        },
+        {
+          id: 'gx-agentes',
+          title: 'Agentes',
+          type: 'item',
+          url: '/maestros-gx/agentes',
           icon: icons.BranchesOutlined
         },
         {
-          id: 'gx-calibres',
-          title: 'Calibres',
+          id: 'gx-consignatarios',
+          title: 'Consignatarios',
           type: 'item',
-          url: '/maestros-gx/calibres',
-          icon: icons.BranchesOutlined
+          url: '/maestros-gx/consignatarios',
+          icon: icons.ApartmentOutlined
         }
       ]
     }

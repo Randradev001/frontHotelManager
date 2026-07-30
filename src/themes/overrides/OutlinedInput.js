@@ -24,7 +24,12 @@ export default function OutlinedInput(theme) {
       styleOverrides: {
         input: { padding: '10.5px 14px 10.5px 12px' },
         notchedOutline: { borderColor: theme.vars.palette.grey[300] },
-        root: { ...getColor({ variant: 'primary', theme }), '&.Mui-error': { ...getColor({ variant: 'error', theme }) } },
+        root: {
+          borderRadius: 8,
+          transition: 'box-shadow 180ms ease, border-color 180ms ease',
+          ...getColor({ variant: 'primary', theme }),
+          '&.Mui-error': { ...getColor({ variant: 'error', theme }) }
+        },
         inputSizeSmall: { padding: '7.5px 8px 7.5px 12px' },
         inputMultiline: { padding: 0 },
         colorSecondary: getColor({ variant: 'secondary', theme }),

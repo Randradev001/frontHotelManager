@@ -1,28 +1,27 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
 import { matchPath, useLocation } from 'react-router-dom';
-// material-ui
+
+import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import List from '@mui/material/List';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 
 import DownOutlined from '@ant-design/icons/DownOutlined';
 import RightOutlined from '@ant-design/icons/RightOutlined';
 
-// project import
-import NavItem from './NavItem';
 import { useGetMenuMaster } from 'api/menu';
-
-// ==============================|| NAVIGATION - LIST GROUP ||============================== //
+import NavItem from './NavItem';
 
 const hasSelectedChild = (item, pathname) =>
-  (item.children || []).some((child) => child.url && matchPath({ path: child.url, end: false }, pathname));
+  (item.children || []).some(
+    (child) => (child.url && matchPath({ path: child.url, end: false }, pathname)) || hasSelectedChild(child, pathname)
+  );
 
-function NavCollapseItem({ item }) {
+function NavCollapseItem({ item, level = 1 }) {
   const { menuMaster } = useGetMenuMaster();
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
   const { pathname } = useLocation();
@@ -42,7 +41,7 @@ function NavCollapseItem({ item }) {
           onClick={() => setManualOpen(!open)}
           sx={{
             zIndex: 1201,
-            pl: drawerOpen ? '28px' : 1.5,
+            pl: drawerOpen ? `${level * 24 + 4}px` : 1.5,
             py: !drawerOpen ? 1.25 : 1,
             ...(drawerOpen && {
               '&:hover': { bgcolor: 'primary.lighter' },
@@ -100,9 +99,13 @@ function NavCollapseItem({ item }) {
 
       <Collapse in={drawerOpen && open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding sx={{ py: 0 }}>
-          {(item.children || []).map((child) => (
-            <NavItem key={child.id} item={child} level={2} />
-          ))}
+          {(item.children || []).map((child) =>
+            child.type === 'collapse' ? (
+              <NavCollapseItem key={child.id} item={child} level={level + 1} />
+            ) : (
+              <NavItem key={child.id} item={child} level={level + 1} />
+            )
+          )}
         </List>
       </Collapse>
     </>
@@ -114,18 +117,14 @@ export default function NavGroup({ item }) {
   const drawerOpen = menuMaster.isDashboardDrawerOpened;
 
   const navCollapse = item.children?.map((menuItem) => {
-    switch (menuItem.type) {
-      case 'collapse':
-        return <NavCollapseItem key={menuItem.id} item={menuItem} />;
-      case 'item':
-        return <NavItem key={menuItem.id} item={menuItem} level={1} />;
-      default:
-        return (
-          <Typography key={menuItem.id} variant="h6" color="error" align="center">
-            Fix - Group Collapse or Items
-          </Typography>
-        );
-    }
+    if (menuItem.type === 'collapse') return <NavCollapseItem key={menuItem.id} item={menuItem} level={1} />;
+    if (menuItem.type === 'item') return <NavItem key={menuItem.id} item={menuItem} level={1} />;
+
+    return (
+      <Typography key={menuItem.id} variant="h6" color="error" align="center">
+        Fix - Group Collapse or Items
+      </Typography>
+    );
   });
 
   return (
@@ -147,5 +146,8 @@ export default function NavGroup({ item }) {
   );
 }
 
-NavCollapseItem.propTypes = { item: PropTypes.object };
+NavCollapseItem.propTypes = {
+  item: PropTypes.object,
+  level: PropTypes.number
+};
 NavGroup.propTypes = { item: PropTypes.object };

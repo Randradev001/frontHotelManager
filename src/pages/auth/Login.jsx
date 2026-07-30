@@ -8,12 +8,17 @@ import AuthLogin from 'sections/auth/AuthLogin';
 export default function Login() {
   return (
     <AuthWrapper>
-      <Grid container spacing={3}>
+      <Grid container spacing={3.5}>
         <Grid size={12}>
-          <Stack sx={{ gap: 0.5, mb: { xs: -0.5, sm: 0.5 } }}>
-            <Typography variant="h3">Ingreso a CONEX</Typography>
-            <Typography variant="body2" color="text.secondary">
-              Use las credenciales asignadas por Seguridad.
+          <Stack sx={{ gap: 1 }}>
+            <Typography variant="h2" sx={{ fontSize: { xs: '1.75rem', sm: '2rem' }, fontWeight: 700 }}>
+              Bienvenido a{' '}
+              <Typography component="span" variant="inherit" sx={{ whiteSpace: 'nowrap' }}>
+                CONEX-CO
+              </Typography>
+            </Typography>
+            <Typography variant="body1" color="text.secondary">
+              Ingrese sus credenciales para continuar.
             </Typography>
           </Stack>
         </Grid>

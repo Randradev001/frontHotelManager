@@ -37,11 +37,11 @@ export default defineConfig(({ mode }) => {
        VitePWA({  // congigure PWA plugin
             registerType: 'autoUpdate',
             manifest: {
-              name: 'Conex',
-              short_name: 'Conex',
-              description: 'Sistema Conex para packing, maestros y despacho de fruta',
-              theme_color: '#0f172a',
-              background_color: '#ffffff',
+              name: 'CONEX-CO - Control de exportación',
+              short_name: 'CONEX-CO',
+              description: 'Control de packing, procesos y exportación de fruta',
+              theme_color: '#008040',
+              background_color: '#f8faf9',
               display: 'standalone',
               start_url: '/free/',
               scope: '/free/',

@@ -13,7 +13,7 @@ import { APP_DEFAULT_PATH } from 'config';
 
 export default function LogoSection({ reverse, isIcon, sx, to }) {
   return (
-    <ButtonBase disableRipple component={Link} to={to || APP_DEFAULT_PATH} sx={sx} aria-label="Logo">
+    <ButtonBase disableRipple component={Link} to={to || APP_DEFAULT_PATH} sx={sx} aria-label="Ir al inicio de CONEX-CO">
       {isIcon ? <LogoIcon /> : <Logo reverse={reverse} />}
     </ButtonBase>
   );

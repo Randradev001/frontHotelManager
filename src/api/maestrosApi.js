@@ -10,6 +10,9 @@ const catalogPaths = {
   categoriasEnvase: 'categorias-envase',
   productores: 'productores',
   cuarteles: 'cuarteles',
+  clientes: 'clientes',
+  agentes: 'agentes',
+  consignatarios: 'consignatarios',
   comunas: 'comunas'
 };
 

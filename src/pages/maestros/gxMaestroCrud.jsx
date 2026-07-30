@@ -15,7 +15,10 @@ import InputAdornment from '@mui/material/InputAdornment';
 import MenuItem from '@mui/material/MenuItem';
 import Snackbar from '@mui/material/Snackbar';
 import Stack from '@mui/material/Stack';
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
 import TextField from '@mui/material/TextField';
+import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 
 import { DataGrid } from '@mui/x-data-grid';
@@ -23,6 +26,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import ClearOutlined from '@ant-design/icons/ClearOutlined';
 import DeleteOutlined from '@ant-design/icons/DeleteOutlined';
 import EditOutlined from '@ant-design/icons/EditOutlined';
+import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import PlusOutlined from '@ant-design/icons/PlusOutlined';
 import SaveOutlined from '@ant-design/icons/SaveOutlined';
 import SearchOutlined from '@ant-design/icons/SearchOutlined';
@@ -35,6 +39,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import ListExportButtons from 'components/ListExportButtons';
 import MainCard from 'components/MainCard';
 import { deleteMaestro, insertMaestro, listMaestro, updateMaestro } from 'api/maestrosApi';
+import { useAuth } from 'contexts/AuthContext';
 import { gxMaestrosConfig } from './gxMaestrosConfig';
 
 const isFilled = (value) => value !== undefined && value !== null && value !== '';
@@ -141,6 +146,10 @@ const buildValidationSchema = (config) => {
       if (field.exclusiveMin !== undefined) {
         validator = validator.moreThan(field.exclusiveMin, `${label} debe ser mayor a ${field.exclusiveMin}`);
       }
+
+      if (field.max !== undefined) {
+        validator = validator.max(field.max, `${label} debe ser menor o igual a ${field.max}`);
+      }
     } else {
       validator = Yup.string().trim().nullable();
     }
@@ -240,7 +249,423 @@ const usesOptionSource = (config, source) =>
     return settings.source === source;
   });
 
-const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSubmitting, onCancel, onSubmit }) => {
+const speciesVarietyColumns = [
+  { field: 'VarCod', headerName: 'Codigo', width: 110 },
+  { field: 'VarNom', headerName: 'Variedad', flex: 1, minWidth: 200 },
+  { field: 'varnomC', headerName: 'Nombre corto', width: 140 },
+  { field: 'VarPLU', headerName: 'PLU', width: 140 },
+  { field: 'VarSECod', headerName: 'Codigo SE', width: 140 }
+];
+
+const speciesCalibreColumns = [
+  { field: 'CalCod', headerName: 'Orden', width: 120 },
+  { field: 'Calibre', headerName: 'Calibre', flex: 1, minWidth: 220 }
+];
+
+const SpeciesRelations = ({ species, empCod, editable, onNotify }) => {
+  const queryClient = useQueryClient();
+  const [activeTab, setActiveTab] = useState(0);
+  const [childForm, setChildForm] = useState({ open: false, mode: 'create', catalog: 'variedades', row: null });
+  const [deleteChild, setDeleteChild] = useState(null);
+  const speciesCode = species?.Especod;
+  const enabled = isFilled(empCod) && isFilled(speciesCode);
+
+  const varietiesQuery = useQuery({
+    queryKey: ['gx-maestros', 'especies', 'detalle', 'variedades', empCod, speciesCode],
+    queryFn: () => listMaestro('variedades', { Especod: speciesCode, limit: 1000 }),
+    enabled
+  });
+  const calibresQuery = useQuery({
+    queryKey: ['gx-maestros', 'especies', 'detalle', 'calibres', empCod, speciesCode],
+    queryFn: () => listMaestro('calibres', { Especod: speciesCode, limit: 1000 }),
+    enabled
+  });
+
+  const varieties = varietiesQuery.data?.data || [];
+  const calibres = calibresQuery.data?.data || [];
+  const activeCatalog = activeTab === 0 ? 'variedades' : 'calibres';
+  const activeQuery = activeTab === 0 ? varietiesQuery : calibresQuery;
+  const activeRows = activeTab === 0 ? varieties : calibres;
+  const activeBaseColumns = activeTab === 0 ? speciesVarietyColumns : speciesCalibreColumns;
+
+  const invalidateDetail = async (catalog) => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['gx-maestros', 'especies', 'detalle', catalog, empCod, speciesCode] }),
+      queryClient.invalidateQueries({ queryKey: ['gx-maestros', catalog] })
+    ]);
+  };
+
+  const saveChildMutation = useMutation({
+    mutationFn: ({ catalog, mode, payload }) =>
+      mode === 'edit' ? updateMaestro(catalog, payload) : insertMaestro(catalog, payload),
+    onSuccess: async (data, variables) => {
+      await invalidateDetail(variables.catalog);
+      setChildForm({ open: false, mode: 'create', catalog: variables.catalog, row: null });
+      onNotify?.(data?.message || 'Detalle guardado correctamente', 'success');
+    },
+    onError: (error) => onNotify?.(getErrorMessage(error, 'No fue posible guardar el detalle'), 'error')
+  });
+
+  const deleteChildMutation = useMutation({
+    mutationFn: ({ catalog, row }) => {
+      const detailConfig = gxMaestrosConfig[catalog];
+      const payload = detailConfig.primaryKey.reduce((values, fieldName) => {
+        values[fieldName] = row[fieldName];
+        return values;
+      }, {});
+      return deleteMaestro(catalog, payload);
+    },
+    onSuccess: async (data, variables) => {
+      await invalidateDetail(variables.catalog);
+      setDeleteChild(null);
+      onNotify?.(data?.message || 'Detalle eliminado correctamente', 'success');
+    },
+    onError: (error) => onNotify?.(getErrorMessage(error, 'No fue posible eliminar el detalle'), 'error')
+  });
+
+  const activeColumns = useMemo(() => {
+    if (!editable) return activeBaseColumns;
+    return [
+      {
+        field: 'actions',
+        headerName: 'Acciones',
+        width: 120,
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => (
+          <Stack direction="row" spacing={0.5}>
+            <Tooltip title="Editar">
+              <IconButton
+                size="small"
+                color="primary"
+                aria-label="Editar detalle"
+                onClick={() => setChildForm({ open: true, mode: 'edit', catalog: activeCatalog, row: params.row })}
+              >
+                <EditOutlined />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Eliminar">
+              <IconButton
+                size="small"
+                color="error"
+                aria-label="Eliminar detalle"
+                onClick={() => setDeleteChild({ catalog: activeCatalog, row: params.row })}
+              >
+                <DeleteOutlined />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        )
+      },
+      ...activeBaseColumns
+    ];
+  }, [activeBaseColumns, activeCatalog, editable]);
+
+  const childConfig = gxMaestrosConfig[childForm.catalog];
+  const childLabel = childForm.catalog === 'variedades' ? 'variedad' : 'calibre';
+  const closeChildForm = () => setChildForm((current) => ({ ...current, open: false, row: null }));
+
+  return (
+    <Box sx={{ mt: 3 }}>
+      <Divider />
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        spacing={1}
+      >
+        <Tabs value={activeTab} onChange={(event, value) => setActiveTab(value)}>
+          <Tab label={'Variedades (' + varieties.length + ')'} />
+          <Tab label={'Calibres (' + calibres.length + ')'} />
+        </Tabs>
+        {editable && (
+          <Button
+            variant="contained"
+            startIcon={<PlusOutlined />}
+            onClick={() => setChildForm({ open: true, mode: 'create', catalog: activeCatalog, row: null })}
+          >
+            {activeTab === 0 ? 'Nueva variedad' : 'Nuevo calibre'}
+          </Button>
+        )}
+      </Stack>
+
+      {activeQuery.isError && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {getErrorMessage(activeQuery.error, 'No fue posible cargar los datos relacionados')}
+        </Alert>
+      )}
+
+      <Box sx={{ height: 360, width: '100%', mt: 2 }}>
+        <DataGrid
+          rows={activeRows}
+          columns={activeColumns}
+          loading={activeQuery.isLoading || activeQuery.isFetching}
+          getRowId={(row) =>
+            activeTab === 0
+              ? String(row.EmpCod) + '|' + String(row.Especod) + '|' + String(row.VarCod)
+              : String(row.EmpCod) + '|' + String(row.Especod) + '|' + String(row.Calibre)
+          }
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          disableRowSelectionOnClick
+        />
+      </Box>
+
+      <Dialog open={childForm.open} onClose={saveChildMutation.isPending ? undefined : closeChildForm} fullWidth maxWidth="md">
+        <DialogTitle>{childForm.mode === 'edit' ? 'Editar ' + childLabel : 'Nuevo ' + childLabel}</DialogTitle>
+        <Divider />
+        <DialogContent sx={{ p: 3 }}>
+          {childConfig && (
+            <MaestroForm
+              config={childConfig}
+              mode={childForm.mode}
+              initialData={childForm.row}
+              fixedValues={{ EmpCod: empCod, Especod: speciesCode }}
+              optionSets={{ especies: [species] }}
+              isSubmitting={saveChildMutation.isPending}
+              onCancel={closeChildForm}
+              onSubmit={(payload) =>
+                saveChildMutation.mutate({
+                  catalog: childForm.catalog,
+                  mode: childForm.mode,
+                  payload:
+                    childForm.catalog === 'calibres' && childForm.mode === 'edit'
+                      ? { ...payload, OriginalCalibre: childForm.row.Calibre }
+                      : payload
+                })
+              }
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(deleteChild)} onClose={deleteChildMutation.isPending ? undefined : () => setDeleteChild(null)} fullWidth maxWidth="xs">
+        <DialogTitle>Eliminar {deleteChild?.catalog === 'variedades' ? 'variedad' : 'calibre'}</DialogTitle>
+        <Divider />
+        <DialogContent sx={{ p: 3 }}>
+          <Typography variant="body2">
+            {deleteChild?.catalog === 'variedades' ? deleteChild?.row?.VarNom : deleteChild?.row?.Calibre}
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" disabled={deleteChildMutation.isPending} onClick={() => setDeleteChild(null)}>
+            Cancelar
+          </Button>
+          <Button
+            color="error"
+            variant="contained"
+            disabled={deleteChildMutation.isPending}
+            onClick={() => deleteChildMutation.mutate(deleteChild)}
+          >
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+const categoryColumns = [
+  { field: 'Catcod', headerName: 'Codigo', width: 120 },
+  { field: 'CatNom', headerName: 'Categoria', flex: 1, minWidth: 220 },
+  { field: 'CatNomC', headerName: 'Nombre corto', width: 150 },
+  { field: 'CatnomExt', headerName: 'Nombre externo', width: 180 },
+  { field: 'CatSECod', headerName: 'Codigo SE', width: 150 }
+];
+
+const cuartelColumns = [
+  { field: 'CuarCod', headerName: 'Codigo', width: 120 },
+  { field: 'CuarNom', headerName: 'Cuartel', flex: 1, minWidth: 260 },
+  { field: 'CuarnomC', headerName: 'Nombre corto', width: 160 }
+];
+
+const singleDetailDefinitions = {
+  envases: {
+    catalog: 'categoriasEnvase',
+    parentField: 'EnvCod',
+    optionSource: 'envases',
+    title: 'Categorias',
+    singular: 'categoría',
+    newLabel: 'Nueva categoría',
+    columns: categoryColumns,
+    rowLabel: (row) => row?.CatNom
+  },
+  productores: {
+    catalog: 'cuarteles',
+    parentField: 'ProdCod',
+    optionSource: 'productores',
+    title: 'Cuarteles',
+    singular: 'cuartel',
+    newLabel: 'Nuevo cuartel',
+    columns: cuartelColumns,
+    rowLabel: (row) => row?.CuarNom
+  }
+};
+
+const SingleDetailRelations = ({ parentCatalog, parent, empCod, editable, onNotify }) => {
+  const queryClient = useQueryClient();
+  const definition = singleDetailDefinitions[parentCatalog];
+  const detailConfig = gxMaestrosConfig[definition.catalog];
+  const parentValue = parent?.[definition.parentField];
+  const enabled = isFilled(empCod) && isFilled(parentValue);
+  const [childForm, setChildForm] = useState({ open: false, mode: 'create', row: null });
+  const [deleteChild, setDeleteChild] = useState(null);
+
+  const detailsQuery = useQuery({
+    queryKey: ['gx-maestros', parentCatalog, 'detalle', definition.catalog, empCod, parentValue],
+    queryFn: () => listMaestro(definition.catalog, { [definition.parentField]: parentValue, limit: 1000 }),
+    enabled
+  });
+  const rows = detailsQuery.data?.data || [];
+
+  const invalidateDetail = async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ['gx-maestros', parentCatalog, 'detalle', definition.catalog, empCod, parentValue] }),
+      queryClient.invalidateQueries({ queryKey: ['gx-maestros', definition.catalog] })
+    ]);
+  };
+
+  const saveMutation = useMutation({
+    mutationFn: ({ mode, payload }) =>
+      mode === 'edit' ? updateMaestro(definition.catalog, payload) : insertMaestro(definition.catalog, payload),
+    onSuccess: async (data) => {
+      await invalidateDetail();
+      setChildForm({ open: false, mode: 'create', row: null });
+      onNotify?.(data?.message || 'Detalle guardado correctamente', 'success');
+    },
+    onError: (error) => onNotify?.(getErrorMessage(error, 'No fue posible guardar el detalle'), 'error')
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (row) => {
+      const payload = detailConfig.primaryKey.reduce((values, fieldName) => {
+        values[fieldName] = row[fieldName];
+        return values;
+      }, {});
+      return deleteMaestro(definition.catalog, payload);
+    },
+    onSuccess: async (data) => {
+      await invalidateDetail();
+      setDeleteChild(null);
+      onNotify?.(data?.message || 'Detalle eliminado correctamente', 'success');
+    },
+    onError: (error) => onNotify?.(getErrorMessage(error, 'No fue posible eliminar el detalle'), 'error')
+  });
+
+  const columns = useMemo(() => {
+    if (!editable) return definition.columns;
+    return [
+      {
+        field: 'actions',
+        headerName: 'Acciones',
+        width: 120,
+        sortable: false,
+        filterable: false,
+        disableColumnMenu: true,
+        align: 'center',
+        headerAlign: 'center',
+        renderCell: (params) => (
+          <Stack direction="row" spacing={0.5}>
+            <Tooltip title="Editar">
+              <IconButton
+                size="small"
+                color="primary"
+                aria-label="Editar detalle"
+                onClick={() => setChildForm({ open: true, mode: 'edit', row: params.row })}
+              >
+                <EditOutlined />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Eliminar">
+              <IconButton size="small" color="error" aria-label="Eliminar detalle" onClick={() => setDeleteChild(params.row)}>
+                <DeleteOutlined />
+              </IconButton>
+            </Tooltip>
+          </Stack>
+        )
+      },
+      ...definition.columns
+    ];
+  }, [definition, editable]);
+
+  const closeChildForm = () => setChildForm((current) => ({ ...current, open: false, row: null }));
+  const fixedValues = { EmpCod: empCod, [definition.parentField]: parentValue };
+  const optionSets = { [definition.optionSource]: [parent] };
+
+  return (
+    <Box sx={{ mt: 3 }}>
+      <Divider />
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        spacing={1}
+        sx={{ py: 1.5 }}
+      >
+        <Typography variant="subtitle1">{definition.title + ' (' + rows.length + ')'}</Typography>
+        {editable && (
+          <Button variant="contained" startIcon={<PlusOutlined />} onClick={() => setChildForm({ open: true, mode: 'create', row: null })}>
+            {definition.newLabel}
+          </Button>
+        )}
+      </Stack>
+
+      {detailsQuery.isError && (
+        <Alert severity="error">{getErrorMessage(detailsQuery.error, 'No fue posible cargar los datos relacionados')}</Alert>
+      )}
+
+      <Box sx={{ height: 360, width: '100%', mt: 1 }}>
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          loading={detailsQuery.isLoading || detailsQuery.isFetching}
+          getRowId={(row) => detailConfig.primaryKey.map((fieldName) => row[fieldName]).join('|')}
+          pageSizeOptions={[10, 25, 50]}
+          initialState={{ pagination: { paginationModel: { page: 0, pageSize: 10 } } }}
+          disableRowSelectionOnClick
+        />
+      </Box>
+
+      <Dialog open={childForm.open} onClose={saveMutation.isPending ? undefined : closeChildForm} fullWidth maxWidth="md">
+        <DialogTitle>{childForm.mode === 'edit' ? 'Editar ' + definition.singular : definition.newLabel}</DialogTitle>
+        <Divider />
+        <DialogContent sx={{ p: 3 }}>
+          <MaestroForm
+            config={detailConfig}
+            mode={childForm.mode}
+            initialData={childForm.row}
+            fixedValues={fixedValues}
+            optionSets={optionSets}
+            isSubmitting={saveMutation.isPending}
+            onCancel={closeChildForm}
+            onSubmit={(payload) => saveMutation.mutate({ mode: childForm.mode, payload })}
+          />
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={Boolean(deleteChild)} onClose={deleteMutation.isPending ? undefined : () => setDeleteChild(null)} fullWidth maxWidth="xs">
+        <DialogTitle>{'Eliminar ' + definition.singular}</DialogTitle>
+        <Divider />
+        <DialogContent sx={{ p: 3 }}>
+          <Typography variant="body2">{definition.rowLabel(deleteChild)}</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button color="secondary" disabled={deleteMutation.isPending} onClick={() => setDeleteChild(null)}>
+            Cancelar
+          </Button>
+          <Button color="error" variant="contained" disabled={deleteMutation.isPending} onClick={() => deleteMutation.mutate(deleteChild)}>
+            Eliminar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
+  );
+};
+
+const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSubmitting, formId, hideActions = false, onCancel, onSubmit }) => {
   const [lookupState, setLookupState] = useState({ field: null, searchText: '' });
   const validationSchema = useMemo(() => buildValidationSchema(config), [config]);
   const initialValues = useMemo(() => buildInitialValues(config, initialData, fixedValues), [config, initialData, fixedValues]);
@@ -266,7 +691,7 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
         };
 
         return (
-        <form noValidate onSubmit={handleSubmit}>
+        <form id={formId} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             {config.fields.filter((field) => !field.hidden).map((field) => {
               const isKey = config.primaryKey.includes(field.name);
@@ -275,7 +700,8 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
               const isRequired = field.required || isKey;
               const hasSelectOptions = Boolean(field.options || field.optionSource);
               const options = hasSelectOptions ? getOptions(optionSets, field) : [];
-              const disabled = field.readOnly || (mode === 'edit' && isKey) || isFixed || (field.contextOnly && !field.optionSource);
+              const disabled =
+                mode === 'view' || field.readOnly || (mode === 'edit' && isKey && !field.editableOnUpdate) || isFixed || (field.contextOnly && !field.optionSource);
               const usesLookup = Boolean(field.optionSource?.lookup);
               const selectedValue = values[field.name];
               const selectedValueHasOption =
@@ -344,6 +770,7 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
                         ...(field.maxLength ? { maxLength: field.maxLength } : {}),
                         ...(field.type === 'decimal' ? { step: '0.0001' } : {}),
                         ...(field.min !== undefined ? { min: field.min } : {}),
+                        ...(field.max !== undefined ? { max: field.max } : {}),
                         ...(field.exclusiveMin !== undefined ? { min: Number(field.exclusiveMin) + 0.0001 } : {})
                       }}
                       InputLabelProps={field.type === 'date' ? { shrink: true } : undefined}
@@ -374,25 +801,29 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
               );
             })}
 
-            <Grid size={12}>
-              <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} justifyContent="flex-end">
-                <Button
-                  variant="outlined"
-                  color="secondary"
-                  startIcon={<ClearOutlined />}
-                  onClick={() => {
-                    resetForm();
-                    onCancel();
-                  }}
-                >
-                  Cancelar
-                </Button>
+            {!hideActions && (
+              <Grid size={12}>
+                <Stack direction={{ xs: 'column', sm: 'row' }} spacing={1} justifyContent="flex-end">
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    startIcon={<ClearOutlined />}
+                    onClick={() => {
+                      resetForm();
+                      onCancel();
+                    }}
+                  >
+                    {mode === 'view' ? 'Cerrar' : 'Cancelar'}
+                  </Button>
 
-                <Button type="submit" variant="contained" startIcon={<SaveOutlined />} disabled={isSubmitting}>
-                  {isSubmitting ? 'Guardando...' : 'Guardar'}
-                </Button>
-              </Stack>
-            </Grid>
+                  {mode !== 'view' && (
+                    <Button type="submit" variant="contained" startIcon={<SaveOutlined />} disabled={isSubmitting}>
+                      {isSubmitting ? 'Guardando...' : 'Guardar'}
+                    </Button>
+                  )}
+                </Stack>
+              </Grid>
+            )}
           </Grid>
 
           <Dialog open={Boolean(lookupField)} onClose={closeLookup} fullWidth maxWidth="sm">
@@ -460,7 +891,19 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
 };
 
 const GxMaestroCrud = ({ catalogName }) => {
-  const config = gxMaestrosConfig[catalogName];
+  const baseConfig = gxMaestrosConfig[catalogName];
+  const { company } = useAuth();
+  const config = useMemo(() => {
+    if (!baseConfig?.contextParams || baseConfig.contextParams.EmpCod === undefined) return baseConfig;
+
+    return {
+      ...baseConfig,
+      contextParams: { ...baseConfig.contextParams, EmpCod: company?.empCod },
+      fields: baseConfig.fields.map((field) =>
+        field.name === 'EmpCod' ? { ...field, defaultValue: company?.empCod } : field
+      )
+    };
+  }, [baseConfig, company?.empCod]);
   const queryClient = useQueryClient();
 
   const [filters, setFilters] = useState(() => buildInitialFilters(config));
@@ -631,7 +1074,7 @@ const GxMaestroCrud = ({ catalogName }) => {
       {
         field: 'actions',
         headerName: 'Acciones',
-        width: 120,
+        width: 168,
         sortable: false,
         filterable: false,
         disableColumnMenu: true,
@@ -639,23 +1082,48 @@ const GxMaestroCrud = ({ catalogName }) => {
         headerAlign: 'center',
         renderCell: (params) => (
           <Stack direction="row" spacing={1}>
-            <Button
-              size="small"
-              variant="text"
-              color="primary"
-              onClick={() => setFormState({ open: true, mode: 'edit', row: params.row })}
-              sx={{ minWidth: 36 }}
-            >
-              <EditOutlined />
-            </Button>
+            <Tooltip title="Visualizar">
+              <Button
+                size="small"
+                variant="text"
+                color="secondary"
+                onClick={() => setFormState({ open: true, mode: 'view', row: params.row })}
+                sx={{ minWidth: 36 }}
+                aria-label="Visualizar registro"
+              >
+                <EyeOutlined />
+              </Button>
+            </Tooltip>
 
-            <Button size="small" variant="text" color="error" onClick={() => setDeleteRow(params.row)} sx={{ minWidth: 36 }}>
-              <DeleteOutlined />
-            </Button>
+            <Tooltip title="Actualizar">
+              <Button
+                size="small"
+                variant="text"
+                color="primary"
+                onClick={() => setFormState({ open: true, mode: 'edit', row: params.row })}
+                sx={{ minWidth: 36 }}
+                aria-label="Actualizar registro"
+              >
+                <EditOutlined />
+              </Button>
+            </Tooltip>
+
+            <Tooltip title="Eliminar">
+              <Button
+                size="small"
+                variant="text"
+                color="error"
+                onClick={() => setDeleteRow(params.row)}
+                sx={{ minWidth: 36 }}
+                aria-label="Eliminar registro"
+              >
+                <DeleteOutlined />
+              </Button>
+            </Tooltip>
           </Stack>
         )
       },
-      ...config.fields.filter((field) => !field.hidden).map((field) => ({
+      ...config.fields.filter((field) => !field.hidden && !field.listHidden).map((field) => ({
         field: field.name,
         headerName: getDisplayLabel(field.label),
         width: field.width,
@@ -670,7 +1138,7 @@ const GxMaestroCrud = ({ catalogName }) => {
   const exportColumns = useMemo(
     () =>
       config.fields
-        .filter((field) => !field.hidden)
+        .filter((field) => !field.hidden && !field.listHidden)
         .map((field) => ({
           field: field.name,
           headerName: getDisplayLabel(field.label),
@@ -729,6 +1197,13 @@ const GxMaestroCrud = ({ catalogName }) => {
     setSnackbar({ open: true, message, severity });
   };
 
+  const closeForm = () => setFormState({ open: false, mode: 'create', row: null });
+  const showHeaderDetails = ['especies', 'envases', 'productores'].includes(catalogName)
+    && formState.open
+    && ['view', 'edit'].includes(formState.mode)
+    && Boolean(formState.row);
+  const headerDetailLabel = { especies: 'especie', envases: 'envase', productores: 'productor' }[catalogName];
+
   if (!config) {
     return (
       <MainCard title="Maestro">
@@ -750,6 +1225,19 @@ const GxMaestroCrud = ({ catalogName }) => {
             {visibleFilters.map((filter) => {
               const options = getOptions(optionSets, filter);
               const disabled = filter.dependsOn && !isFilled(filters[filter.dependsOn]);
+
+              if (filter.type === 'text') {
+                return (
+                  <TextField
+                    key={filter.name}
+                    fullWidth
+                    label={getDisplayLabel(filter.label)}
+                    value={filters[filter.name] || ''}
+                    onChange={(event) => handleFilterChange(filter.name, event.target.value)}
+                    disabled={disabled}
+                  />
+                );
+              }
 
               return (
                 <TextField
@@ -846,8 +1334,12 @@ const GxMaestroCrud = ({ catalogName }) => {
         </Box>
       </Stack>
 
-      <Dialog open={formState.open} onClose={() => setFormState({ open: false, mode: 'create', row: null })} fullWidth maxWidth="md">
-        <DialogTitle>{formState.mode === 'edit' ? 'Editar' : 'Nuevo'} registro</DialogTitle>
+      <Dialog open={formState.open} onClose={closeForm} fullWidth maxWidth={showHeaderDetails ? 'lg' : 'md'}>
+        <DialogTitle>
+          {showHeaderDetails
+            ? (formState.mode === 'edit' ? 'Editar ' : 'Visualizar ') + headerDetailLabel
+            : (formState.mode === 'view' ? 'Visualizar' : formState.mode === 'edit' ? 'Editar' : 'Nuevo') + ' registro'}
+        </DialogTitle>
 
         <Divider />
 
@@ -859,10 +1351,50 @@ const GxMaestroCrud = ({ catalogName }) => {
             fixedValues={fixedValues}
             optionSets={optionSets}
             isSubmitting={createMutation.isPending || updateMutation.isPending}
-            onCancel={() => setFormState({ open: false, mode: 'create', row: null })}
+            formId={showHeaderDetails ? 'parent-header-form' : undefined}
+            hideActions={showHeaderDetails}
+            onCancel={closeForm}
             onSubmit={handleSubmit}
           />
+
+          {showHeaderDetails && catalogName === 'especies' && (
+            <SpeciesRelations
+              species={formState.row}
+              empCod={company?.empCod}
+              editable={formState.mode === 'edit'}
+              onNotify={(message, severity = 'info') => setSnackbar({ open: true, message, severity })}
+            />
+          )}
+
+          {showHeaderDetails && ['envases', 'productores'].includes(catalogName) && (
+            <SingleDetailRelations
+              parentCatalog={catalogName}
+              parent={formState.row}
+              empCod={company?.empCod}
+              editable={formState.mode === 'edit'}
+              onNotify={(message, severity = 'info') => setSnackbar({ open: true, message, severity })}
+            />
+          )}
         </DialogContent>
+
+        {showHeaderDetails && (
+          <DialogActions sx={{ px: 3, py: 2 }}>
+            <Button color="secondary" variant="outlined" startIcon={<ClearOutlined />} onClick={closeForm}>
+              {formState.mode === 'edit' ? 'Cancelar' : 'Cerrar'}
+            </Button>
+            {formState.mode === 'edit' && (
+              <Button
+                type="submit"
+                form="parent-header-form"
+                variant="contained"
+                startIcon={<SaveOutlined />}
+                disabled={updateMutation.isPending}
+              >
+                {updateMutation.isPending ? 'Guardando...' : 'Guardar cabecera'}
+              </Button>
+            )}
+          </DialogActions>
+        )}
       </Dialog>
 
       <Dialog open={Boolean(deleteRow)} onClose={() => setDeleteRow(null)} fullWidth maxWidth="xs">

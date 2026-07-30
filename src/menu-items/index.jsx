@@ -1,11 +1,9 @@
-// project import
 import dashboard from './dashboard';
 import maestros from './maestros';
-
-// ==============================|| MENU ITEMS ||============================== //
+import seguridad from './seguridad';
 
 const menuItems = {
-  items: [dashboard, maestros]
+  items: [dashboard, maestros, seguridad]
 };
 
 export default menuItems;

@@ -101,7 +101,10 @@ export default function Button(theme) {
       },
       styleOverrides: {
         root: {
-          fontWeight: 400,
+          borderRadius: 8,
+          fontWeight: 600,
+          letterSpacing: 0,
+          transition: 'background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease',
           '&::after': {
             content: '""',
             display: 'block',
@@ -110,14 +113,14 @@ export default function Button(theme) {
             top: 0,
             width: '100%',
             height: '100%',
-            borderRadius: 4,
+            borderRadius: 8,
             opacity: 0,
             transition: 'all 0.5s'
           },
 
           '&:active::after': {
             position: 'absolute',
-            borderRadius: 4,
+            borderRadius: 8,
             left: 0,
             top: 0,
             opacity: 1,

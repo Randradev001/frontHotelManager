@@ -9,6 +9,8 @@ import CardContent from './CardContent';
 import Checkbox from './Checkbox';
 import Chip from './Chip';
 import Drawer from './Drawer';
+import DataGrid from './DataGrid';
+import Dialog from './Dialog';
 import FormHelperText from './FormHelperText';
 import IconButton from './IconButton';
 import InputLabel from './InputLabel';
@@ -36,6 +38,8 @@ export default function ComponentsOverrides(theme) {
     CardContent(),
     Checkbox(theme),
     Chip(theme),
+    DataGrid(theme),
+    Dialog(theme),
     Drawer(),
     FormHelperText(),
     IconButton(theme),

@@ -5,25 +5,25 @@ import { presetPalettes } from '@ant-design/colors';
 import ThemeOption from './theme';
 import { extendPaletteWithChannels } from 'utils/colorUtils';
 
-const greyAscent = ['#fafafa', '#bfbfbf', '#434343', '#1f1f1f'];
+const greyAscent = ['#f8faf9', '#a7b1aa', '#374151', '#1f2937'];
 
 // ==============================|| GREY COLORS BUILDER ||============================== //
 
 function buildGrey() {
-  let greyPrimary = [
+  const greyPrimary = [
     '#ffffff',
-    '#fafafa',
-    '#f5f5f5',
-    '#f0f0f0',
-    '#d9d9d9',
-    '#bfbfbf',
-    '#8c8c8c',
-    '#595959',
-    '#262626',
-    '#141414',
-    '#000000'
+    '#f8faf9',
+    '#f1f5f2',
+    '#e8eee9',
+    '#d8e3dc',
+    '#a7b1aa',
+    '#6b7280',
+    '#4b5563',
+    '#374151',
+    '#1f2937',
+    '#111827'
   ];
-  let greyConstant = ['#fafafb', '#e6ebf1'];
+  const greyConstant = ['#f8faf9', '#d8e3dc'];
 
   return [...greyPrimary, ...greyAscent, ...greyConstant];
 }
@@ -45,15 +45,19 @@ export function buildPalette(presetColor) {
       ...extendedCommon,
       ...extendedLight,
       text: {
-        primary: extendedLight.grey[700],
-        secondary: extendedLight.grey[500],
-        disabled: extendedLight.grey[400]
+        primary: '#1f2937',
+        secondary: '#6b7280',
+        disabled: '#a7b1aa'
       },
-      action: { disabled: extendedLight.grey[300] },
-      divider: extendedLight.grey[200],
+      action: {
+        disabled: '#d8e3dc',
+        hover: 'rgba(0, 128, 64, 0.05)',
+        selected: 'rgba(0, 128, 64, 0.09)'
+      },
+      divider: '#d8e3dc',
       background: {
-        paper: extendedLight.grey[0],
-        default: extendedLight.grey.A50
+        paper: '#ffffff',
+        default: '#f8faf9'
       }
     }
   };

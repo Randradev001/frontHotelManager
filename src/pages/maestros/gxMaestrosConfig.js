@@ -3,11 +3,6 @@ const siNoOptions = [
   { value: 0, label: 'NO' }
 ];
 
-const regionOptions = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII', 'RM'].map((region) => ({
-  value: region,
-  label: region
-}));
-
 export const TEMP_SESSION_CONTEXT = {
   EmpCod: 1,
   Login: 'MIGRACION'
@@ -56,10 +51,12 @@ const numberField = (name, label, options = {}) => ({
   optionSource: options.optionSource,
   defaultValue: options.defaultValue,
   min: options.min,
+  max: options.max,
   exclusiveMin: options.exclusiveMin,
   readOnly: options.readOnly || false,
   contextOnly: options.contextOnly || false,
-  hidden: options.hidden || false
+  hidden: options.hidden || false,
+  listHidden: options.listHidden || false
 });
 
 const textField = (name, label, maxLength, options = {}) => ({
@@ -76,8 +73,10 @@ const textField = (name, label, maxLength, options = {}) => ({
   optionSource: options.optionSource,
   defaultValue: options.defaultValue,
   readOnly: options.readOnly || false,
+  editableOnUpdate: options.editableOnUpdate || false,
   contextOnly: options.contextOnly || false,
-  hidden: options.hidden || false
+  hidden: options.hidden || false,
+  listHidden: options.listHidden || false
 });
 
 const decimalField = (name, label, options = {}) => ({
@@ -115,34 +114,22 @@ export const gxMaestrosConfig = {
     level: 1,
     apiName: 'empresas',
     route: '/maestros-gx/empresas',
-    contextParams: companyContext,
     primaryKey: ['EmpCod'],
     fields: [
-      numberField('EmpCod', 'Codigo empresa (EmpCod)', {
+      numberField('EmpCod', 'Codigo empresa', {
         required: true,
         min: 1,
-        defaultValue: TEMP_SESSION_CONTEXT.EmpCod,
-        contextOnly: true,
-        hidden: true
+        width: 150,
+        formSize: { xs: 12, md: 4 }
       }),
-      textField('EmpNom', 'Nombre empresa (EmpNom)', 50, { flex: 1, minWidth: 240, required: true }),
-      textField('EmpGiro', 'Giro comercial (EmpGiro)', 35, { minWidth: 200 }),
-      textField('Empdir', 'Direccion (Empdir)', 30, { minWidth: 190 }),
-      numberField('EmpRut', 'RUT empresa (EmpRut)', { width: 140 }),
-      textField('EmpDV', 'Digito verificador (EmpDV)', 1, { width: 150, formSize: { xs: 12, md: 3 } }),
-      textField('EmpRepre', 'Representante legal (EmpRepre)', 20, { minWidth: 190 }),
-      numberField('EmpSw', 'Estado empresa (EmpSw)', { width: 150 }),
-      numberField('EmpPar1', 'Parametro 1 (EmpPar1)', { width: 150 }),
-      numberField('EmpPar2', 'Parametro 2 (EmpPar2)', { width: 150 }),
-      textField('empreg', 'Region empresa (empreg)', 4, { width: 160, formSize: { xs: 12, md: 3 }, options: regionOptions }),
-      numberField('empSisProd', 'Sistema produccion (empSisProd)', { width: 190, options: siNoOptions }),
-      numberField('EmpTempLot', 'Temporada lotes (EmpTempLot)', { width: 180 }),
-      numberField('EmpCodSAG', 'Codigo SAG (EmpCodSAG)', { width: 170 }),
-      textField('EmpCodCom', 'Codigo comuna (EmpCodCom)', 20, { width: 180 }),
-      textField('EmpRutIMG', 'Imagen RUT (EmpRutIMG)', 100, { minWidth: 220, formSize: { xs: 12, md: 8 } }),
-      numberField('EmpTReg', 'Tipo registro (EmpTReg)', { width: 160, options: siNoOptions }),
-      textField('Empprov', 'Provincia (Empprov)', 20, { width: 170 }),
-      textField('Empcom', 'Comuna (Empcom)', 20, { width: 170 })
+      textField('EmpNom', 'Nombre empresa', 50, { flex: 1, minWidth: 240, required: true }),
+      textField('EmpGiro', 'Giro comercial', 35, { required: true, minWidth: 200 }),
+      textField('Empdir', 'Direccion', 30, { required: true, minWidth: 190 }),
+      numberField('EmpRut', 'RUT empresa', { required: true, width: 140 }),
+      textField('EmpDV', 'Digito verificador', 1, { required: true, width: 150, formSize: { xs: 12, md: 3 } }),
+      numberField('EmpSw', 'Estado empresa', { required: true, defaultValue: 0, width: 150, options: siNoOptions }),
+      textField('empreg', 'Region', 4, { required: true, width: 180 }),
+      textField('Empcom', 'Comuna', 20, { required: true, width: 180 })
     ]
   },
   temporadas: {
@@ -191,7 +178,6 @@ export const gxMaestrosConfig = {
       textField('EspePLU', 'PLU especie (EspePLU)', 15, { width: 170, formSize: { xs: 12, md: 4 } }),
       numberField('EspeCMP', 'Codigo CMP (EspeCMP)', { width: 160 }),
       textField('EspeNomExt', 'Nombre externo (EspeNomExt)', 20, { minWidth: 200 }),
-      textField('EspeNMP', 'Nombre Multipuerto (EspeNMP)', 100, { minWidth: 240 }),
       textField('EspeSECod', 'Codigo SE (EspeSECod)', 10, { width: 170, formSize: { xs: 12, md: 4 } })
     ]
   },
@@ -244,7 +230,6 @@ export const gxMaestrosConfig = {
       textField('EnvnomC', 'Nombre corto (EnvnomC)', 10, { width: 170, formSize: { xs: 12, md: 3 } }),
       numberField('EnvCMP', 'Codigo CMP envase (EnvCMP)', { width: 190 }),
       textField('EnvNomExt', 'Nombre externo (EnvNomExt)', 20, { minWidth: 210 }),
-      textField('EnvNMP', 'Envase Multipuerto (EnvNMP)', 20, { minWidth: 210 }),
       textField('EnvSECod', 'Codigo SE envase (EnvSECod)', 10, { width: 190, formSize: { xs: 12, md: 4 } })
     ]
   },
@@ -299,7 +284,7 @@ export const gxMaestrosConfig = {
     fields: [
       numberField('EmpCod', 'Empresa (EmpCod)', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
       numberField('Especod', 'Especie (Especod)', { required: true, min: 1, optionSource: especieSource }),
-      textField('Calibre', 'Calibre (Calibre)', 10, { width: 170, required: true, formSize: { xs: 12, md: 4 } }),
+      textField('Calibre', 'Calibre (Calibre)', 10, { width: 170, required: true, editableOnUpdate: true, formSize: { xs: 12, md: 4 } }),
       numberField('CalCod', 'Codigo orden calibre (CalCod)', { min: 1, readOnly: true, width: 220 })
     ]
   },
@@ -355,7 +340,75 @@ export const gxMaestrosConfig = {
       textField('CuarNom', 'Nombre cuartel (CuarNom)', 35, { required: true, flex: 1, minWidth: 260 }),
       textField('CuarnomC', 'Nombre corto (CuarnomC)', 4, { required: true, width: 180, formSize: { xs: 12, md: 3 } })
     ]
+  },
+  clientes: {
+    title: 'Clientes',
+    table: 'CLIENTES',
+    level: 1,
+    parentTable: 'DEFEMP',
+    apiName: 'clientes',
+    route: '/maestros-gx/clientes',
+    contextParams: companyContext,
+    primaryKey: ['EmpCod', 'CliCod'],
+    filters: [{ name: 'CliNom', label: 'Nombre cliente', type: 'text' }],
+    fields: [
+      numberField('EmpCod', 'Empresa', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
+      numberField('CliCod', 'Codigo cliente', { required: true, min: 1, max: 99999, width: 150, formSize: { xs: 12, md: 3 } }),
+      numberField('Clirut', 'RUT cliente', { max: 999999999, width: 160, formSize: { xs: 12, md: 4 } }),
+      textField('CliDv', 'Digito verificador', 1, { width: 170, formSize: { xs: 12, md: 2 } }),
+      textField('CliNom', 'Nombre cliente', 40, { required: true, flex: 1, minWidth: 260 }),
+      textField('Clidirec', 'Direccion', 40, { listHidden: true, formSize: { xs: 12, md: 8 } }),
+      textField('CliGiro', 'Giro comercial', 30, { listHidden: true }),
+      textField('Cliciu', 'Ciudad', 30, { listHidden: true }),
+      textField('CliCom', 'Comuna', 30, { listHidden: true }),
+      textField('CliFono', 'Telefono', 30, { listHidden: true }),
+      textField('CliRegion', 'Region', 20, { listHidden: true })
+    ]
+  },
+  agentes: {
+    title: 'Agentes',
+    table: 'AGENTES',
+    level: 1,
+    parentTable: 'DEFEMP',
+    apiName: 'agentes',
+    route: '/maestros-gx/agentes',
+    contextParams: companyContext,
+    primaryKey: ['EmpCod', 'AgeCod'],
+    fields: [
+      numberField('EmpCod', 'Empresa', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
+      numberField('AgeCod', 'Codigo agente', { required: true, min: 1, max: 999, width: 150, formSize: { xs: 12, md: 3 } }),
+      numberField('Agerut', 'RUT agente', { required: true, min: 1, max: 999999999, width: 160, formSize: { xs: 12, md: 4 } }),
+      textField('AgeDv', 'Digito verificador', 1, { required: true, width: 170, formSize: { xs: 12, md: 2 } }),
+      textField('AgeNom', 'Nombre agente', 30, { required: true, flex: 1, minWidth: 260 }),
+      numberField('AgecodMP', 'Codigo agente Multiport', { max: 99999, listHidden: true, width: 210, formSize: { xs: 12, md: 4 } })
+    ]
+  },
+  consignatarios: {
+    title: 'Consignatarios',
+    table: 'CONSIG',
+    level: 1,
+    parentTable: 'DEFEMP',
+    apiName: 'consignatarios',
+    route: '/maestros-gx/consignatarios',
+    contextParams: companyContext,
+    primaryKey: ['EmpCod', 'ConsCod'],
+    fields: [
+      numberField('EmpCod', 'Empresa', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
+      numberField('ConsCod', 'Codigo consignatario', { required: true, min: 1, max: 999, width: 190, formSize: { xs: 12, md: 3 } }),
+      numberField('ConsRut', 'RUT consignatario', { max: 999999999, width: 190, formSize: { xs: 12, md: 4 } }),
+      textField('ConsDV', 'Digito verificador', 1, { width: 170, formSize: { xs: 12, md: 2 } }),
+      textField('ConsNom', 'Nombre consignatario', 30, { required: true, flex: 1, minWidth: 280 })
+    ]
   }
 };
 
-export const gxMaestrosMenu = ['empresas', 'temporadas', 'envases', 'categoriasEnvase', 'especies', 'variedades', 'productores', 'cuarteles', 'calibres'];
+export const gxMaestrosMenu = [
+  'empresas',
+  'temporadas',
+  'envases',
+  'especies',
+  'productores',
+  'clientes',
+  'agentes',
+  'consignatarios'
+];

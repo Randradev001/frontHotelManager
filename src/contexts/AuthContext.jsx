@@ -46,6 +46,7 @@ export function AuthProvider({ children }) {
       user: session?.user || null,
       company: session?.company || null,
       permissions: session?.permissions || null,
+      menu: session?.menu || [],
       authenticated: Boolean(session),
       loading,
       login,

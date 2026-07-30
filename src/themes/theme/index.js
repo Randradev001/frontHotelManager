@@ -1,7 +1,7 @@
 // ==============================|| PRESET THEME - DEFAULT ||============================== //
 
 export default function Default(colors) {
-  const { blue, red, gold, cyan, green, grey } = colors;
+  const { red, gold, cyan, green, grey } = colors;
   const greyColors = {
     0: grey[0],
     50: grey[1],
@@ -25,16 +25,16 @@ export default function Default(colors) {
 
   return {
     primary: {
-      lighter: blue[0],
-      100: blue[1],
-      200: blue[2],
-      light: blue[3],
-      400: blue[4],
-      main: blue[5],
-      dark: blue[6],
-      700: blue[7],
-      darker: blue[8],
-      900: blue[9],
+      lighter: '#e6f5ee',
+      100: '#cdebdc',
+      200: '#a7dbc1',
+      light: '#4daa7a',
+      400: '#1a9158',
+      main: '#008040',
+      dark: '#006b36',
+      700: '#005d30',
+      darker: '#004d27',
+      900: '#003a1d',
       contrastText
     },
     secondary: {

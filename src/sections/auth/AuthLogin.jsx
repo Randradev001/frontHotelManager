@@ -25,6 +25,21 @@ import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
+import UserOutlined from '@ant-design/icons/UserOutlined';
+import LockOutlined from '@ant-design/icons/LockOutlined';
+import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
+
+const formatRut = (value) => {
+  const normalized = String(value || '')
+    .toUpperCase()
+    .replace(/[^0-9K]/g, '')
+    .slice(0, 10);
+  if (normalized.length <= 1) return normalized;
+
+  const body = normalized.slice(0, -1);
+  const verifier = normalized.slice(-1);
+  return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}-${verifier}`;
+};
 
 export default function AuthLogin({ isDemo = false }) {
   const [remember, setRemember] = React.useState(false);
@@ -36,9 +51,9 @@ export default function AuthLogin({ isDemo = false }) {
 
   return (
     <Formik
-      initialValues={{ login: '', password: '', empCod: '', submit: null }}
+      initialValues={{ rut: '', password: '', empCod: '', submit: null }}
       validationSchema={Yup.object({
-        login: Yup.string().trim().max(10, 'El usuario admite hasta 10 caracteres').required('El usuario es obligatorio'),
+        rut: Yup.string().trim().max(13, 'El RUT es demasiado extenso').required('El RUT es obligatorio'),
         password: Yup.string().max(128, 'La clave es demasiado extensa').required('La clave es obligatoria'),
         empCod: companies.length ? Yup.number().required('Seleccione una empresa') : Yup.mixed()
       })}
@@ -51,15 +66,15 @@ export default function AuthLogin({ isDemo = false }) {
           }
           navigate(location.state?.from?.pathname || '/', { replace: true });
         } catch (error) {
-          setErrors({ submit: error.response?.data?.message || 'No fue posible iniciar sesion.' });
+          setErrors({ submit: error.response?.data?.message || 'No fue posible iniciar sesión.' });
         } finally {
           setSubmitting(false);
         }
       }}
     >
-      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
+      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, setFieldValue, touched, values }) => (
         <form noValidate onSubmit={handleSubmit}>
-          <Grid container spacing={3}>
+          <Grid container spacing={2.5}>
             {errors.submit && (
               <Grid size={12}>
                 <Alert severity="error">{errors.submit}</Alert>
@@ -67,21 +82,28 @@ export default function AuthLogin({ isDemo = false }) {
             )}
             <Grid size={12}>
               <Stack sx={{ gap: 1 }}>
-                <InputLabel htmlFor="user-login">Usuario</InputLabel>
+                <InputLabel htmlFor="user-rut">RUT</InputLabel>
                 <OutlinedInput
-                  id="user-login"
-                  name="login"
-                  value={values.login}
+                  id="user-rut"
+                  name="rut"
+                  value={values.rut}
                   onBlur={handleBlur}
-                  onChange={handleChange}
-                  placeholder="Ingrese su usuario"
+                  onChange={(event) => setFieldValue('rut', formatRut(event.target.value))}
+                  placeholder="12.345.678-5"
                   autoComplete="username"
+                  inputProps={{ maxLength: 13 }}
                   disabled={companies.length > 0}
                   fullWidth
-                  error={Boolean(touched.login && errors.login)}
+                  error={Boolean(touched.rut && errors.rut)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <UserOutlined aria-hidden="true" />
+                    </InputAdornment>
+                  }
+                  sx={{ height: 52, bgcolor: 'background.paper' }}
                 />
               </Stack>
-              {touched.login && errors.login && <FormHelperText error>{errors.login}</FormHelperText>}
+              {touched.rut && errors.rut && <FormHelperText error>{errors.rut}</FormHelperText>}
             </Grid>
             <Grid size={12}>
               <Stack sx={{ gap: 1 }}>
@@ -98,6 +120,11 @@ export default function AuthLogin({ isDemo = false }) {
                   disabled={companies.length > 0}
                   fullWidth
                   error={Boolean(touched.password && errors.password)}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      <LockOutlined aria-hidden="true" />
+                    </InputAdornment>
+                  }
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
@@ -112,6 +139,7 @@ export default function AuthLogin({ isDemo = false }) {
                       </IconButton>
                     </InputAdornment>
                   }
+                  sx={{ height: 52, bgcolor: 'background.paper' }}
                 />
               </Stack>
               {touched.password && errors.password && <FormHelperText error>{errors.password}</FormHelperText>}
@@ -129,6 +157,7 @@ export default function AuthLogin({ isDemo = false }) {
                     onBlur={handleBlur}
                     displayEmpty
                     error={Boolean(touched.empCod && errors.empCod)}
+                    sx={{ height: 52, bgcolor: 'background.paper' }}
                   >
                     <MenuItem value="" disabled>
                       Seleccione una empresa
@@ -143,7 +172,7 @@ export default function AuthLogin({ isDemo = false }) {
                 {touched.empCod && errors.empCod && <FormHelperText error>{errors.empCod}</FormHelperText>}
               </Grid>
             )}
-            <Grid sx={{ mt: -1 }} size={12}>
+            <Grid sx={{ mt: -0.5 }} size={12}>
               <FormControlLabel
                 control={
                   <Checkbox
@@ -154,15 +183,28 @@ export default function AuthLogin({ isDemo = false }) {
                     disabled={companies.length > 0}
                   />
                 }
-                label={<Typography variant="body2">Mantener la sesion iniciada</Typography>}
+                label={<Typography variant="body2">Mantener la sesión iniciada</Typography>}
               />
             </Grid>
             <Grid size={12}>
               <AnimateButton>
-                <Button fullWidth size="large" type="submit" variant="contained" disabled={isSubmitting}>
+                <Button
+                  fullWidth
+                  size="large"
+                  type="submit"
+                  variant="contained"
+                  disabled={isSubmitting}
+                  endIcon={!isSubmitting ? <ArrowRightOutlined /> : null}
+                  sx={{ minHeight: 52, fontSize: '0.95rem' }}
+                >
                   {isSubmitting ? <CircularProgress size={22} color="inherit" /> : companies.length ? 'Ingresar a la empresa' : 'Ingresar'}
                 </Button>
               </AnimateButton>
+            </Grid>
+            <Grid size={12}>
+              <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center' }}>
+                ¿Necesita ayuda? Contacte al administrador de Seguridad.
+              </Typography>
             </Grid>
           </Grid>
         </form>

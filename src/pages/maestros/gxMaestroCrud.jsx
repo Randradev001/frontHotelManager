@@ -691,7 +691,7 @@ const MaestroForm = ({ config, mode, initialData, fixedValues, optionSets, isSub
         return (
         <form id={formId} noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            {config.fields.filter((field) => !field.hidden).map((field) => {
+            {config.fields.filter((field) => !field.hidden && !field.formHidden).map((field) => {
               const isKey = config.primaryKey.includes(field.name);
               const displayLabel = getDisplayLabel(field.label);
               const isFixed = isFilled(fixedValues[field.name]);
@@ -914,6 +914,7 @@ const GxMaestroCrud = ({ catalogName }) => {
   const visibleFilters = useMemo(() => getVisibleFilters(config), [config]);
   const scopedEmpCod = config.contextParams?.EmpCod;
   const needsEmpresasOptions = useMemo(() => usesOptionSource(config, 'empresas'), [config]);
+  const needsTiposFamiliaOptions = useMemo(() => usesOptionSource(config, 'tiposFamilia'), [config]);
   const needsEspeciesOptions = useMemo(() => usesOptionSource(config, 'especies'), [config]);
   const needsEnvasesOptions = useMemo(() => usesOptionSource(config, 'envases'), [config]);
   const needsComunasOptions = useMemo(() => usesOptionSource(config, 'comunas'), [config]);
@@ -938,6 +939,13 @@ const GxMaestroCrud = ({ catalogName }) => {
     queryKey: ['gx-maestros', 'empresas', 'options'],
     queryFn: () => listMaestro('empresas', { limit: 1000 }),
     enabled: needsEmpresasOptions,
+    staleTime: 5 * 60 * 1000
+  });
+
+  const tiposFamiliaQuery = useQuery({
+    queryKey: ['gx-maestros', 'tiposFamilia', 'options', scopedEmpCod],
+    queryFn: () => listMaestro('tiposFamilia', { EmpCod: scopedEmpCod, limit: 1000 }),
+    enabled: needsTiposFamiliaOptions && isFilled(scopedEmpCod),
     staleTime: 5 * 60 * 1000
   });
 
@@ -972,12 +980,13 @@ const GxMaestroCrud = ({ catalogName }) => {
   const optionSets = useMemo(
     () => ({
       empresas: empresasQuery.data?.data || [],
+      tiposFamilia: tiposFamiliaQuery.data?.data || [],
       especies: especiesOptionsQuery.data?.data || [],
       envases: envasesQuery.data?.data || [],
       comunas: comunasQuery.data?.data || [],
       productores: productoresQuery.data?.data || []
     }),
-    [empresasQuery.data, especiesOptionsQuery.data, envasesQuery.data, comunasQuery.data, productoresQuery.data]
+    [empresasQuery.data, tiposFamiliaQuery.data, especiesOptionsQuery.data, envasesQuery.data, comunasQuery.data, productoresQuery.data]
   );
 
   const rowsQuery = useQuery({

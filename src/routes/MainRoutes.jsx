@@ -23,6 +23,8 @@ const MainRoutes = {
     { path: 'dashboard', children: [{ path: 'default', element: <DashboardDefault /> }] },
     { path: 'maestros-gx/empresas', element: <GxMaestroCrud key="gx-empresas" catalogName="empresas" /> },
     { path: 'maestros-gx/temporadas', element: <GxMaestroCrud key="gx-temporadas" catalogName="temporadas" /> },
+    { path: 'maestros-gx/tipos-familia', element: <GxMaestroCrud key="gx-tipos-familia" catalogName="tiposFamilia" /> },
+    { path: 'maestros-gx/familias', element: <GxMaestroCrud key="gx-familias" catalogName="familias" /> },
     { path: 'maestros-gx/especies', element: <GxMaestroCrud key="gx-especies" catalogName="especies" /> },
     { path: 'maestros-gx/variedades', element: <GxMaestroCrud key="gx-variedades-especies" catalogName="especies" /> },
     { path: 'maestros-gx/envases', element: <GxMaestroCrud key="gx-envases" catalogName="envases" /> },

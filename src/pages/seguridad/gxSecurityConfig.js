@@ -45,6 +45,11 @@ const userTypeOptions = [
   { value: 1, label: 'Administrador' }
 ];
 
+const programTypeOptions = [
+  { value: 1, label: 'Usuarios' },
+  { value: 2, label: 'Sistema' }
+];
+
 export const gxSecurityConfig = {
   usuarios: {
     title: 'Usuarios',
@@ -171,7 +176,12 @@ export const gxSecurityConfig = {
       numberField('ProgCod', 'Codigo del programa', { required: true, min: 1, width: 180 }),
       textField('ProgDes', 'Descripcion', 35, { required: true, flex: 1, minWidth: 230 }),
       dateField('ProgFcrea', 'Fecha de creacion', { readOnly: true }),
-      numberField('ProgTipo', 'Tipo de programa', { width: 160 }),
+      numberField('ProgTipo', 'Tipo de programa', {
+        required: true,
+        defaultValue: 1,
+        width: 170,
+        options: programTypeOptions
+      }),
       textField('ProgNomGX', 'Nombre GeneXus', 100, { minWidth: 190 }),
       textField('ProgIDmenu', 'Identificador de menu', 20, { minWidth: 190 }),
       textField('ProgTarget', 'Destino', 20, { minWidth: 170 })

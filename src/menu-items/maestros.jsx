@@ -40,6 +40,20 @@ const maestros = {
           icon: icons.CalendarOutlined
         },
         {
+          id: 'gx-tipos-familia',
+          title: 'Tipos de familia',
+          type: 'item',
+          url: '/maestros-gx/tipos-familia',
+          icon: icons.BranchesOutlined
+        },
+        {
+          id: 'gx-familias',
+          title: 'Familias de articulos',
+          type: 'item',
+          url: '/maestros-gx/familias',
+          icon: icons.AppstoreOutlined
+        },
+        {
           id: 'gx-envases',
           title: 'Envases',
           type: 'item',

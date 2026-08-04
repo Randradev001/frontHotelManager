@@ -3,6 +3,8 @@ import api from './api';
 const catalogPaths = {
   empresas: 'empresas',
   temporadas: 'temporadas',
+  tiposFamilia: 'tipos-familia',
+  familias: 'familias',
   especies: 'especies',
   variedades: 'variedades',
   calibres: 'calibres',

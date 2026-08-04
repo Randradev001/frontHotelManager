@@ -91,6 +91,11 @@ const toPayloadValue = (field, value) => {
 const formatCellValue = (field, value) => {
   if (!isFilled(value)) return '';
 
+  if (field.options) {
+    const selectedOption = field.options.find((option) => String(option.value) === String(value));
+    if (selectedOption) return selectedOption.label;
+  }
+
   if (field.type === 'date') {
     const dateValue = new Date(value);
 

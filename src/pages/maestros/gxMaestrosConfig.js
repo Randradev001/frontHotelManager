@@ -19,6 +19,13 @@ const especieSource = {
   lookup: true
 };
 
+const tipoFamiliaSource = {
+  source: 'tiposFamilia',
+  valueField: 'FamTCod',
+  labelField: 'FamTDescrip',
+  lookup: true
+};
+
 const envaseSource = {
   source: 'envases',
   valueField: 'EnvCod',
@@ -56,6 +63,7 @@ const numberField = (name, label, options = {}) => ({
   readOnly: options.readOnly || false,
   contextOnly: options.contextOnly || false,
   hidden: options.hidden || false,
+  formHidden: options.formHidden || false,
   listHidden: options.listHidden || false
 });
 
@@ -76,6 +84,7 @@ const textField = (name, label, maxLength, options = {}) => ({
   editableOnUpdate: options.editableOnUpdate || false,
   contextOnly: options.contextOnly || false,
   hidden: options.hidden || false,
+  formHidden: options.formHidden || false,
   listHidden: options.listHidden || false
 });
 
@@ -167,6 +176,38 @@ export const gxMaestrosConfig = {
       dateField('TempFecCierra', 'Fecha cierre (TempFecCierra)'),
       textField('TempLogC', 'Usuario cierre (TempLogC)', 10, { formSize: { xs: 12, md: 4 } }),
       numberField('TempActiva', 'Temporada activa (TempActiva)', { width: 180, options: siNoOptions, defaultValue: 1 })
+    ]
+  },
+  tiposFamilia: {
+    title: 'Tipos de familia de articulos',
+    table: 'FamTipo',
+    level: 1,
+    apiName: 'tiposFamilia',
+    route: '/maestros-gx/tipos-familia',
+    contextParams: companyContext,
+    primaryKey: ['EmpCod', 'FamTCod'],
+    fields: [
+      numberField('EmpCod', 'Empresa (EmpCod)', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
+      numberField('FamTCod', 'Codigo tipo (FamTCod)', { required: true, min: 1, max: 9999, width: 170 }),
+      textField('FamTDescrip', 'Descripcion tipo (FamTDescrip)', 25, { required: true, flex: 1, minWidth: 260 })
+    ]
+  },
+  familias: {
+    title: 'Familias de articulos',
+    table: 'Fam',
+    level: 1,
+    apiName: 'familias',
+    route: '/maestros-gx/familias',
+    contextParams: companyContext,
+    primaryKey: ['EmpCod', 'FamFam'],
+    allowDelete: false,
+    fields: [
+      numberField('EmpCod', 'Empresa (EmpCod)', { required: true, min: 1, defaultValue: TEMP_SESSION_CONTEXT.EmpCod, contextOnly: true, hidden: true }),
+      numberField('FamFam', 'Codigo familia (FamFam)', { required: true, min: 1, max: 999, width: 180 }),
+      textField('FamDesc', 'Descripcion familia (FamDesc)', 45, { required: true, flex: 1, minWidth: 280 }),
+      numberField('FamEQ', 'Codigo equivalencia (FamEQ)', { min: 0, max: 99, width: 190 }),
+      numberField('FamTCod', 'Tipo de familia (FamTCod)', { required: true, min: 1, max: 9999, width: 190, optionSource: tipoFamiliaSource }),
+      textField('FamTDescrip', 'Descripcion tipo de familia', 25, { formHidden: true, minWidth: 240 })
     ]
   },
   especies: {

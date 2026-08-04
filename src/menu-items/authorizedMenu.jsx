@@ -2,43 +2,10 @@ import AppstoreOutlined from '@ant-design/icons/AppstoreOutlined';
 import BranchesOutlined from '@ant-design/icons/BranchesOutlined';
 import FileOutlined from '@ant-design/icons/FileOutlined';
 
-const reactRoutesByGxCall = {
-  'empresasww.aspx': '/maestros-gx/empresas',
-  'tsistemasww.aspx': '/seguridad/sistemas',
-  'tmodulosww.aspx': '/seguridad/modulos',
-  'tprogramww.aspx': '/seguridad/programas',
-  'usuariosww.aspx': '/seguridad/usuarios',
-  'urolesww.aspx': '/seguridad/roles',
-  'cco.maespeciesww.aspx': '/maestros-gx/especies',
-  'cco.macamposww.aspx': '/maestros-gx/productores',
-  'cco.matemporadasww.aspx': '/maestros-gx/temporadas',
-  'cov.covmavariedadww.aspx': '/maestros-gx/especies',
-  'cov.covenvasesww.aspx': '/maestros-gx/envases',
-  wmodulos: '/seguridad/modulos',
-  wprogram: '/seguridad/programas',
-  wusuarios: '/seguridad/usuarios',
-  wasigprog: '/seguridad/asignaciones',
-  tdefemp: '/maestros-gx/empresas',
-  tsistemas: '/seguridad/sistemas',
-  wespecies: '/maestros-gx/especies',
-  wcalibres: '/maestros-gx/especies',
-  wproductores: '/maestros-gx/productores',
-  wenvcat: '/maestros-gx/envases',
-  wtempo: '/maestros-gx/temporadas',
-  wclientes: '/maestros-gx/clientes',
-  wagentes: '/maestros-gx/agentes',
-  wconsig: '/maestros-gx/consignatarios'
+export const resolveProgramRoute = (route) => {
+  const value = String(route || '').trim();
+  return value.startsWith('/') ? value : null;
 };
-
-const normalizeCall = (value) =>
-  String(value || '')
-    .trim()
-    .replace(/\\/g, '/')
-    .split('/')
-    .pop()
-    .toLowerCase();
-
-export const resolveProgramRoute = (gxCall) => reactRoutesByGxCall[normalizeCall(gxCall)] || null;
 
 const deduplicatePrograms = (programs) =>
   programs.filter((program, index) => programs.findIndex((candidate) => candidate.url === program.url) === index);
@@ -59,6 +26,8 @@ export const buildAuthorizedMenu = (systems = [], user = null) => {
                 title:
                   {
                     '/maestros-gx/especies': 'Especies',
+                    '/maestros-gx/tipos-familia': 'Tipos de familia',
+                    '/maestros-gx/familias': 'Familias de articulos',
                     '/maestros-gx/envases': 'Envases',
                     '/maestros-gx/productores': 'Productores',
                     '/maestros-gx/clientes': 'Clientes',

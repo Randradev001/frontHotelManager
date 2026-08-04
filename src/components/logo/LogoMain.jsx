@@ -1,70 +1,47 @@
-// material-ui
-import { useTheme } from '@mui/material/styles';
+import PropTypes from 'prop-types';
 
-// ==============================|| LOGO SVG ||============================== //
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import Typography from '@mui/material/Typography';
 
-export default function LogoMain() {
-  const theme = useTheme();
+import AperpMark from './AperpMark';
 
+export default function LogoMain({ reverse = false }) {
   return (
-    <svg
-      width="214"
-      height="48"
-      viewBox="0 0 214 48"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      role="img"
-      aria-label="CONEX-CO, Control de exportación"
-    >
-      <rect x="13" y="12" width="25" height="25" rx="5" fill={theme.vars.palette.grey[200]} />
-      <rect x="2" y="20" width="27" height="27" rx="6" fill={theme.vars.palette.primary.dark} />
-      <rect x="26" y="1" width="27" height="27" rx="6" fill={theme.vars.palette.primary.main} />
-      <text
-        x="15.5"
-        y="39.5"
-        fill={theme.vars.palette.common.white}
-        fontFamily="Public Sans, Arial, sans-serif"
-        fontSize="19"
-        fontWeight="800"
-        textAnchor="middle"
-        letterSpacing="0"
-      >
-        C
-      </text>
-      <text
-        x="39.5"
-        y="21"
-        fill={theme.vars.palette.common.white}
-        fontFamily="Public Sans, Arial, sans-serif"
-        fontSize="18"
-        fontWeight="800"
-        textAnchor="middle"
-        letterSpacing="0"
-      >
-        O
-      </text>
-      <text
-        x="64"
-        y="25"
-        fill={theme.vars.palette.primary.darker}
-        fontFamily="Public Sans, Arial, sans-serif"
-        fontSize="20"
-        fontWeight="800"
-        letterSpacing="0"
-      >
-        CONEX-CO
-      </text>
-      <text
-        x="64"
-        y="40"
-        fill={theme.vars.palette.text.secondary}
-        fontFamily="Public Sans, Arial, sans-serif"
-        fontSize="8.5"
-        fontWeight="600"
-        letterSpacing="0"
-      >
-        CONTROL DE EXPORTACIÓN
-      </text>
-    </svg>
+    <Stack direction="row" spacing={1.15} alignItems="center">
+      <AperpMark size={46} />
+      <Box sx={{ lineHeight: 1 }}>
+        <Typography
+          component="span"
+          sx={{
+            display: 'block',
+            color: reverse ? '#FFFFFF' : '#061B36',
+            fontSize: '1.72rem',
+            fontWeight: 900,
+            letterSpacing: '0.055em',
+            lineHeight: 0.92
+          }}
+        >
+          APERP
+        </Typography>
+        <Typography
+          component="span"
+          sx={{
+            display: 'block',
+            mt: 0.45,
+            color: reverse ? '#7DD3FC' : '#24364D',
+            fontSize: '0.53rem',
+            fontWeight: 800,
+            letterSpacing: '0.045em',
+            lineHeight: 1,
+            whiteSpace: 'nowrap'
+          }}
+        >
+          IMPULSANDO TU NEGOCIO
+        </Typography>
+      </Box>
+    </Stack>
   );
 }
+
+LogoMain.propTypes = { reverse: PropTypes.bool };

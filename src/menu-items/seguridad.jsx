@@ -20,8 +20,7 @@ const seguridad = {
         { id: 'seg-sistemas', title: 'Sistemas', type: 'item', url: '/seguridad/sistemas', icon: AppstoreOutlined },
         { id: 'seg-modulos', title: 'Modulos', type: 'item', url: '/seguridad/modulos', icon: BranchesOutlined },
         { id: 'seg-programas', title: 'Programas y acciones', type: 'item', url: '/seguridad/programas', icon: AppstoreOutlined },
-        { id: 'seg-asignaciones', title: 'Asignación de accesos', type: 'item', url: '/seguridad/asignaciones', icon: TeamOutlined },
-        { id: 'seg-niveles', title: 'Niveles de seguridad', type: 'item', url: '/seguridad/niveles', icon: LockOutlined }
+        { id: 'seg-asignaciones', title: 'Asignación de accesos', type: 'item', url: '/seguridad/asignaciones', icon: TeamOutlined }
       ]
     }
   ]

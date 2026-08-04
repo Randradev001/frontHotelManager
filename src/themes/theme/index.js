@@ -25,16 +25,16 @@ export default function Default(colors) {
 
   return {
     primary: {
-      lighter: '#e6f5ee',
-      100: '#cdebdc',
-      200: '#a7dbc1',
-      light: '#4daa7a',
-      400: '#1a9158',
-      main: '#008040',
-      dark: '#006b36',
-      700: '#005d30',
-      darker: '#004d27',
-      900: '#003a1d',
+      lighter: '#EAF4FF',
+      100: '#D6EAFE',
+      200: '#AED5FD',
+      light: '#4AA5FA',
+      400: '#1593FF',
+      main: '#087DF1',
+      dark: '#0B559B',
+      700: '#073D75',
+      darker: '#061B36',
+      900: '#031225',
       contrastText
     },
     secondary: {

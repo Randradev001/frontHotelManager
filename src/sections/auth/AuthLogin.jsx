@@ -54,7 +54,7 @@ export default function AuthLogin({ isDemo = false }) {
       initialValues={{ rut: '', password: '', empCod: '', submit: null }}
       validationSchema={Yup.object({
         rut: Yup.string().trim().max(13, 'El RUT es demasiado extenso').required('El RUT es obligatorio'),
-        password: Yup.string().max(128, 'La clave es demasiado extensa').required('La clave es obligatoria'),
+        password: Yup.string().max(10, 'La clave admite hasta 10 caracteres durante la convivencia con GeneXus').required('La clave es obligatoria'),
         empCod: companies.length ? Yup.number().required('Seleccione una empresa') : Yup.mixed()
       })}
       onSubmit={async (values, { setErrors, setSubmitting }) => {
@@ -72,7 +72,7 @@ export default function AuthLogin({ isDemo = false }) {
         }
       }}
     >
-      {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, setFieldValue, touched, values }) => (
+      {({ errors, handleChange, handleSubmit, isSubmitting, setFieldTouched, setFieldValue, touched, values }) => (
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2.5}>
             {errors.submit && (
@@ -87,7 +87,7 @@ export default function AuthLogin({ isDemo = false }) {
                   id="user-rut"
                   name="rut"
                   value={values.rut}
-                  onBlur={handleBlur}
+                  onBlur={() => setFieldTouched('rut', true)}
                   onChange={(event) => setFieldValue('rut', formatRut(event.target.value))}
                   placeholder="12.345.678-5"
                   autoComplete="username"
@@ -112,11 +112,12 @@ export default function AuthLogin({ isDemo = false }) {
                   id="password-login"
                   name="password"
                   value={values.password}
-                  onBlur={handleBlur}
+                  onBlur={() => setFieldTouched('password', true)}
                   onChange={handleChange}
                   type={showPassword ? 'text' : 'password'}
                   placeholder="Ingrese su clave"
                   autoComplete="current-password"
+                  inputProps={{ maxLength: 10 }}
                   disabled={companies.length > 0}
                   fullWidth
                   error={Boolean(touched.password && errors.password)}
@@ -154,7 +155,7 @@ export default function AuthLogin({ isDemo = false }) {
                     name="empCod"
                     value={values.empCod}
                     onChange={handleChange}
-                    onBlur={handleBlur}
+                    onBlur={() => setFieldTouched('empCod', true)}
                     displayEmpty
                     error={Boolean(touched.empCod && errors.empCod)}
                     sx={{ height: 52, bgcolor: 'background.paper' }}

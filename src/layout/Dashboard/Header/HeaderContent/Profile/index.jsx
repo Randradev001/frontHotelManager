@@ -122,7 +122,7 @@ export default function Profile() {
                           <Stack>
                             <Typography variant="h6">{displayName}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              {company?.nombre || 'CONEX-CO'}
+                              {company?.nombre || 'APERP'}
                             </Typography>
                           </Stack>
                         </Stack>
@@ -152,7 +152,7 @@ export default function Profile() {
                           }
                         }}
                         icon={<UserOutlined />}
-                        label="Profile"
+                        label="Perfil"
                         {...a11yProps(0)}
                       />
                       <Tab
@@ -168,7 +168,7 @@ export default function Profile() {
                           }
                         }}
                         icon={<SettingOutlined />}
-                        label="Setting"
+                        label="Opciones"
                         {...a11yProps(1)}
                       />
                     </Tabs>

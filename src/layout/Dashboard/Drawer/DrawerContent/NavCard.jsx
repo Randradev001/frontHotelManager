@@ -21,7 +21,7 @@ export default function NavCard() {
       <Stack alignItems="center" spacing={2.5}>
         <CardMedia component="img" image={avatar} sx={{ width: 112 }} />
         <Stack alignItems="center">
-          <Typography variant="h5">Conex</Typography>
+          <Typography variant="h5">APERP</Typography>
           <Typography variant="h6" color="secondary">
             Maestros base de migracion
           </Typography>

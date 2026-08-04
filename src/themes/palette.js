@@ -5,25 +5,25 @@ import { presetPalettes } from '@ant-design/colors';
 import ThemeOption from './theme';
 import { extendPaletteWithChannels } from 'utils/colorUtils';
 
-const greyAscent = ['#f8faf9', '#a7b1aa', '#374151', '#1f2937'];
+const greyAscent = ['#F8FAFD', '#A9B7C9', '#33465F', '#10233D'];
 
 // ==============================|| GREY COLORS BUILDER ||============================== //
 
 function buildGrey() {
   const greyPrimary = [
     '#ffffff',
-    '#f8faf9',
-    '#f1f5f2',
-    '#e8eee9',
-    '#d8e3dc',
-    '#a7b1aa',
-    '#6b7280',
-    '#4b5563',
-    '#374151',
-    '#1f2937',
-    '#111827'
+    '#F8FAFD',
+    '#F2F6FB',
+    '#E8EEF6',
+    '#D7E1EE',
+    '#A9B7C9',
+    '#718198',
+    '#52647B',
+    '#33465F',
+    '#10233D',
+    '#061B36'
   ];
-  const greyConstant = ['#f8faf9', '#d8e3dc'];
+  const greyConstant = ['#F8FAFD', '#D7E1EE'];
 
   return [...greyPrimary, ...greyAscent, ...greyConstant];
 }
@@ -45,19 +45,19 @@ export function buildPalette(presetColor) {
       ...extendedCommon,
       ...extendedLight,
       text: {
-        primary: '#1f2937',
-        secondary: '#6b7280',
-        disabled: '#a7b1aa'
+        primary: '#10233D',
+        secondary: '#607089',
+        disabled: '#A9B7C9'
       },
       action: {
-        disabled: '#d8e3dc',
-        hover: 'rgba(0, 128, 64, 0.05)',
-        selected: 'rgba(0, 128, 64, 0.09)'
+        disabled: '#D7E1EE',
+        hover: 'rgba(8, 125, 241, 0.07)',
+        selected: 'rgba(8, 125, 241, 0.13)'
       },
-      divider: '#d8e3dc',
+      divider: '#D7E1EE',
       background: {
         paper: '#ffffff',
-        default: '#f8faf9'
+        default: '#F4F7FB'
       }
     }
   };

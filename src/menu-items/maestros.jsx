@@ -16,7 +16,7 @@ const icons = {
 
 const maestros = {
   id: 'maestros-gx-group',
-  title: 'CONEX-CO',
+  title: 'APERP',
   type: 'group',
   children: [
     {

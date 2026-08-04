@@ -31,7 +31,7 @@ function NavCollapseItem({ item, level = 1 }) {
   const open = manualOpen ?? selected;
   const Icon = item.icon;
   const ToggleIcon = open ? DownOutlined : RightOutlined;
-  const textColor = selected ? 'primary.main' : 'text.primary';
+  const textColor = selected ? '#ffffff' : '#A9BBD0';
 
   return (
     <>
@@ -41,15 +41,17 @@ function NavCollapseItem({ item, level = 1 }) {
           onClick={() => setManualOpen(!open)}
           sx={{
             zIndex: 1201,
-            pl: drawerOpen ? `${level * 24 + 4}px` : 1.5,
-            py: !drawerOpen ? 1.25 : 1,
+            pl: drawerOpen ? `${level * 16 + 8}px` : 1.5,
+            py: !drawerOpen ? 1.25 : 0.85,
+            color: textColor,
             ...(drawerOpen && {
-              '&:hover': { bgcolor: 'primary.lighter' },
+              '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)', color: '#ffffff' },
               '&.Mui-selected': {
-                bgcolor: 'primary.lighter',
-                borderRight: '2px solid',
-                borderColor: 'primary.main',
-                '&:hover': { bgcolor: 'primary.lighter' }
+                bgcolor: 'rgba(8, 125, 241, 0.22)',
+                color: '#ffffff',
+                borderLeft: '3px solid',
+                borderColor: '#38BDF8',
+                '&:hover': { bgcolor: 'rgba(8, 125, 241, 0.3)' }
               }
             }),
             ...(!drawerOpen && {
@@ -62,19 +64,20 @@ function NavCollapseItem({ item, level = 1 }) {
             <ListItemIcon
               sx={{
                 minWidth: 28,
-                color: textColor,
+                color: selected ? '#ffffff' : '#A9BBD0',
                 ...(!drawerOpen && {
                   borderRadius: 1.5,
                   width: 36,
                   height: 36,
                   alignItems: 'center',
                   justifyContent: 'center',
-                  '&:hover': { bgcolor: 'secondary.lighter' }
+                  '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.08)' }
                 }),
                 ...(!drawerOpen &&
                   selected && {
-                    bgcolor: 'primary.lighter',
-                    '&:hover': { bgcolor: 'primary.lighter' }
+                    bgcolor: '#087DF1',
+                    color: '#ffffff',
+                    '&:hover': { bgcolor: '#087DF1' }
                   })
               }}
             >
@@ -86,12 +89,12 @@ function NavCollapseItem({ item, level = 1 }) {
             <>
               <ListItemText
                 primary={
-                  <Typography variant="h6" sx={{ color: textColor }}>
+                  <Typography variant="body2" sx={{ color: textColor, fontWeight: selected ? 600 : 400 }}>
                     {item.title}
                   </Typography>
                 }
               />
-              <ToggleIcon style={{ fontSize: '0.75rem' }} />
+              <ToggleIcon style={{ fontSize: '0.75rem', color: textColor }} />
             </>
           )}
         </ListItemButton>
@@ -133,7 +136,7 @@ export default function NavGroup({ item }) {
         item.title &&
         drawerOpen && (
           <Box sx={{ pl: 3, mb: 1.5 }}>
-            <Typography variant="subtitle2" color="textSecondary">
+            <Typography variant="subtitle2" sx={{ color: '#7188A3', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
               {item.title}
             </Typography>
           </Box>

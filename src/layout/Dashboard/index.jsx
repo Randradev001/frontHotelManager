@@ -32,11 +32,14 @@ export default function DashboardLayout() {
       <Header />
       <Drawer />
 
-      <Box component="main" sx={{ width: 'calc(100% - 260px)', flexGrow: 1, p: { xs: 2, sm: 3 } }}>
+      <Box
+        component="main"
+        sx={{ width: '100%', minWidth: 0, flexGrow: 1, p: { xs: 2, sm: 3, xl: 4 }, bgcolor: 'background.default', minHeight: '100vh' }}
+      >
         <Toolbar sx={{ mt: 'inherit' }} />
         <Box
           sx={{
-            ...{ px: { xs: 0, sm: 2 } },
+            px: { xs: 0, sm: 1, lg: 2 },
             position: 'relative',
             minHeight: 'calc(100vh - 110px)',
             display: 'flex',

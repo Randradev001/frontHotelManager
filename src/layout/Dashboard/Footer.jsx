@@ -7,9 +7,9 @@ export default function Footer() {
       direction={{ xs: 'column', sm: 'row' }}
       sx={{ gap: 1.5, alignItems: 'center', justifyContent: 'space-between', p: '24px 16px 0px', mt: 'auto' }}
     >
-      <Typography variant="caption">&copy; 2026 CONEX-CO</Typography>
+      <Typography variant="caption">&copy; {new Date().getFullYear()} APERP</Typography>
       <Typography variant="caption" color="text.secondary">
-        Control de exportación
+        Control de Bodega · Impulsando tu negocio
       </Typography>
     </Stack>
   );

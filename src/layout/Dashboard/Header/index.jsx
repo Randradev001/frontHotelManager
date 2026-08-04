@@ -30,20 +30,19 @@ export default function Header() {
 
   // common header
   const mainHeader = (
-    <Toolbar>
+    <Toolbar sx={{ minHeight: '68px !important', px: { xs: 2, sm: 3 } }}>
       <IconButton
         aria-label="open drawer"
         onClick={() => handlerDrawerOpen(!drawerOpen)}
         edge="start"
-        color="secondary"
-        variant="light"
-        sx={(theme) => ({
-          color: 'text.primary',
-          bgcolor: drawerOpen ? 'transparent' : 'grey.100',
+        sx={{
+          color: '#ffffff',
+          bgcolor: 'transparent',
+          '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.15)' },
           ml: { xs: 0, lg: -2 }
-        })}
+        }}
       >
-        {!drawerOpen ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+        {!drawerOpen ? <MenuUnfoldOutlined style={{ fontSize: '1.25rem' }} /> : <MenuFoldOutlined style={{ fontSize: '1.25rem' }} />}
       </IconButton>
       {headerContent}
     </Toolbar>
@@ -52,11 +51,13 @@ export default function Header() {
   // app-bar params
   const appBar = {
     position: 'fixed',
-    color: 'inherit',
-    elevation: 0,
+    color: 'primary',
+    elevation: 2,
     sx: {
-      borderBottom: '1px solid',
-      borderBottomColor: 'divider',
+      background: 'linear-gradient(100deg, #0B559B 0%, #087DF1 100%)',
+      color: '#ffffff',
+      borderBottom: 'none',
+      boxShadow: '0 8px 24px rgba(6, 27, 54, 0.16)',
       zIndex: 1200,
       width: { xs: '100%', lg: drawerOpen ? `calc(100% - ${DRAWER_WIDTH}px)` : `calc(100% - ${MINI_DRAWER_WIDTH}px)` }
     }

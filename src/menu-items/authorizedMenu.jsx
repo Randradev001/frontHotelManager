@@ -17,7 +17,6 @@ const reactRoutesByGxCall = {
   wmodulos: '/seguridad/modulos',
   wprogram: '/seguridad/programas',
   wusuarios: '/seguridad/usuarios',
-  wnivseg: '/seguridad/niveles',
   wasigprog: '/seguridad/asignaciones',
   tdefemp: '/maestros-gx/empresas',
   tsistemas: '/seguridad/sistemas',
@@ -108,7 +107,7 @@ export const buildAuthorizedMenu = (systems = [], user = null) => {
   if (!authorizedSystems.length) return null;
   return {
     id: 'authorized-systems',
-    title: 'CONEX-CO',
+    title: 'APERP',
     type: 'group',
     children: authorizedSystems
   };

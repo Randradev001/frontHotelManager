@@ -1,3 +1,3 @@
-# Conex Contexts
+# APERP Contexts
 
-Carpeta reservada para contextos compartidos del frontend Conex.
+Carpeta reservada para contextos compartidos del frontend APERP.

@@ -109,27 +109,37 @@ const dateField = (name, label, options = {}) => ({
 
 export const gxMaestrosConfig = {
   empresas: {
-    title: 'Definicion de Empresa',
-    table: 'DEFEMP',
+    title: 'Empresas APERP',
+    table: 'g_emp',
     level: 1,
     apiName: 'empresas',
     route: '/maestros-gx/empresas',
-    primaryKey: ['EmpCod'],
+    allowDelete: false,
+    primaryKey: ['GECODEMP'],
     fields: [
-      numberField('EmpCod', 'Codigo empresa', {
+      numberField('GECODEMP', 'Codigo empresa', {
         required: true,
         min: 1,
         width: 150,
         formSize: { xs: 12, md: 4 }
       }),
-      textField('EmpNom', 'Nombre empresa', 50, { flex: 1, minWidth: 240, required: true }),
-      textField('EmpGiro', 'Giro comercial', 35, { required: true, minWidth: 200 }),
-      textField('Empdir', 'Direccion', 30, { required: true, minWidth: 190 }),
-      numberField('EmpRut', 'RUT empresa', { required: true, width: 140 }),
-      textField('EmpDV', 'Digito verificador', 1, { required: true, width: 150, formSize: { xs: 12, md: 3 } }),
-      numberField('EmpSw', 'Estado empresa', { required: true, defaultValue: 0, width: 150, options: siNoOptions }),
-      textField('empreg', 'Region', 4, { required: true, width: 180 }),
-      textField('Empcom', 'Comuna', 20, { required: true, width: 180 })
+      textField('GERAZSOC', 'Razon social', 50, { flex: 1, minWidth: 260, required: true, formSize: { xs: 12, md: 8 } }),
+      textField('GerazSMS', 'Nombre corto / SMS', 20, { minWidth: 190 }),
+      textField('GEgiro1', 'Giro comercial', 40, { minWidth: 220 }),
+      textField('GEgiro2', 'Giro comercial secundario', 40, { minWidth: 240, listHidden: true }),
+      numberField('GEfonNum', 'Telefono', { min: 0, width: 150 }),
+      numberField('GErut', 'RUT empresa', { required: true, width: 140 }),
+      textField('GEDv', 'Digito verificador', 1, { required: true, width: 150, formSize: { xs: 12, md: 3 } }),
+      textField('GEdire', 'Direccion', 50, { minWidth: 220 }),
+      textField('GEregion', 'Region', 25, { width: 180 }),
+      textField('GEciudad', 'Ciudad', 25, { width: 180 }),
+      textField('GeComuna', 'Comuna', 25, { width: 180 }),
+      textField('GeCordinador', 'Coordinador', 25, { width: 190, listHidden: true }),
+      textField('geCorreo', 'Correo electronico', 80, { minWidth: 230 }),
+      numberField('GeEstado', 'Estado empresa', { required: true, defaultValue: 1, width: 150, options: siNoOptions }),
+      textField('GePaginaWeb', 'Pagina web', 50, { minWidth: 220, listHidden: true }),
+      dateField('GeFecContIni', 'Inicio contrato', { required: true, width: 170 }),
+      dateField('GeFecContFin', 'Termino contrato', { required: true, width: 170 })
     ]
   },
   temporadas: {

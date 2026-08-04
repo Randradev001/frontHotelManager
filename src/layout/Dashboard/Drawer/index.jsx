@@ -47,9 +47,10 @@ export default function MainDrawer({ window }) {
               sx: {
                 boxSizing: 'border-box',
                 width: DRAWER_WIDTH,
-                borderRight: '1px solid',
-                borderRightColor: 'divider',
-                boxShadow: 'inherit'
+                bgcolor: '#061B36',
+                color: '#FFFFFF',
+                borderRight: '1px solid rgba(125, 211, 252, 0.12)',
+                boxShadow: '0 20px 50px rgba(6, 27, 54, 0.28)'
               }
             }
           }}

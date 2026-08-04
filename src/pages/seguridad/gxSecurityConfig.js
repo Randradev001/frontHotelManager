@@ -59,18 +59,17 @@ export const gxSecurityConfig = {
     fields: [
       companyField(),
       textField('UsuLogin', 'Usuario', 10, { required: true, width: 140 }),
-      textField('UsuClave', 'Clave', 64, { type: 'password', listHidden: true, formSize: { xs: 12, md: 4 } }),
+      textField('UsuClave', 'Clave', 10, { type: 'password', listHidden: true, formSize: { xs: 12, md: 4 } }),
       numberField('UsuRut', 'RUT', { required: true, width: 130 }),
       textField('UsuDV', 'Digito verificador', 1, { required: true, width: 130, formSize: { xs: 12, md: 2 } }),
       textField('Usunom', 'Nombre', 35, { required: true, flex: 1, minWidth: 220 }),
       textField('UsuCargo', 'Cargo', 30),
-      dateField('UsuExpira', 'Fecha de expiracion'),
       textField('usucrea', 'Creado por', 10, { readOnly: true, width: 140 }),
-      numberField('UsuNseg', 'Nivel de seguridad', { width: 170 }),
-      textField('UsuCorreo', 'Correo electronico', 30, { minWidth: 210 }),
+      textField('UsuCorreo', 'Correo electronico', 80, { minWidth: 210 }),
       numberField('UsuEstado', 'Estado', { required: true, defaultValue: 1, width: 130, options: userStatusOptions }),
       textField('UsuPerfil', 'Perfil', 10, { width: 140 }),
-      numberField('UsuTipo', 'Tipo de usuario', { required: true, defaultValue: 0, width: 160, options: userTypeOptions })
+      numberField('UsuTipo', 'Tipo de usuario', { required: true, defaultValue: 0, width: 160, options: userTypeOptions }),
+      dateField('usuFecCrea', 'Fecha de creación', { readOnly: true })
     ]
   },
   roles: {
@@ -173,9 +172,9 @@ export const gxSecurityConfig = {
       textField('ProgDes', 'Descripcion', 35, { required: true, flex: 1, minWidth: 230 }),
       dateField('ProgFcrea', 'Fecha de creacion', { readOnly: true }),
       numberField('ProgTipo', 'Tipo de programa', { width: 160 }),
-      textField('ProgNomGX', 'Nombre GeneXus', 20, { minWidth: 190 }),
+      textField('ProgNomGX', 'Nombre GeneXus', 100, { minWidth: 190 }),
       textField('ProgIDmenu', 'Identificador de menu', 20, { minWidth: 190 }),
-      textField('ProgTarget', 'Destino', 120, { minWidth: 170 })
+      textField('ProgTarget', 'Destino', 20, { minWidth: 170 })
     ]
   },
   programaAcciones: {
@@ -197,25 +196,6 @@ export const gxSecurityConfig = {
       numberField('ProgCod', 'Programa', { required: true, optionSource: programSource }),
       numberField('ProgOPCod', 'Codigo de la accion', { required: true, min: 1, width: 170 }),
       textField('ProgOPDes', 'Descripcion de la accion', 35, { required: true, flex: 1, minWidth: 250 })
-    ]
-  },
-  niveles: {
-    title: 'Niveles de seguridad',
-    gxObject: 'NivSeg',
-    table: 'NIVSEG',
-    level: 1,
-    apiName: 'niveles',
-    primaryKey: ['NSegMod', 'NSegProg'],
-    fields: [
-      numberField('NSegMod', 'Nivel del modulo', { required: true, min: 1, width: 160 }),
-      textField('NSegDMod', 'Descripcion del modulo', 30, { minWidth: 210 }),
-      numberField('NSegProg', 'Nivel del programa', { required: true, min: 1, width: 170 }),
-      textField('NsegDes', 'Descripcion', 35, { flex: 1, minWidth: 220 }),
-      numberField('NSegIns', 'Nivel para ingresar'),
-      numberField('NsegUPD', 'Nivel para actualizar'),
-      numberField('NsegDel', 'Nivel para eliminar'),
-      numberField('NsegPRC', 'Nivel para procesar'),
-      textField('NsegLogA', 'Creado por', 10, { readOnly: true, width: 140 })
     ]
   },
   asignacionesSistemas: {

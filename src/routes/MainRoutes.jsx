@@ -59,8 +59,7 @@ const MainRoutes = {
       )
     },
     { path: 'seguridad/asignaciones', element: <UserAssignmentsPage /> },
-    { path: 'seguridad/asignaciones/acciones', element: <UserAssignmentActionsPage /> },
-    { path: 'seguridad/niveles', element: <SecurityCatalogPage catalogName="niveles" /> }
+    { path: 'seguridad/asignaciones/acciones', element: <UserAssignmentActionsPage /> }
   ]
 };
 

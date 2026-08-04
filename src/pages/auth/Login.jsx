@@ -10,15 +10,18 @@ export default function Login() {
     <AuthWrapper>
       <Grid container spacing={3.5}>
         <Grid size={12}>
-          <Stack sx={{ gap: 1 }}>
-            <Typography variant="h2" sx={{ fontSize: { xs: '1.75rem', sm: '2rem' }, fontWeight: 700 }}>
-              Bienvenido a{' '}
-              <Typography component="span" variant="inherit" sx={{ whiteSpace: 'nowrap' }}>
-                CONEX-CO
-              </Typography>
+          <Stack sx={{ gap: 0.85 }}>
+            <Typography
+              component="p"
+              sx={{ color: 'primary.main', fontSize: '0.75rem', fontWeight: 800, letterSpacing: '0.16em', textTransform: 'uppercase' }}
+            >
+              Acceso seguro
             </Typography>
-            <Typography variant="body1" color="text.secondary">
-              Ingrese sus credenciales para continuar.
+            <Typography variant="h2" sx={{ fontSize: { xs: '1.8rem', sm: '2.15rem' }, fontWeight: 850, color: '#061B36' }}>
+              Bienvenido a APERP
+            </Typography>
+            <Typography variant="body1" color="text.secondary" sx={{ maxWidth: 380, lineHeight: 1.65 }}>
+              Ingrese con su RUT y clave. Si pertenece a más de una empresa, podrá elegirla antes de continuar.
             </Typography>
           </Stack>
         </Grid>

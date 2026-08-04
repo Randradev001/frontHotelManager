@@ -17,6 +17,9 @@ You are a **Frontend Template Architect**. Your goal is to build a visually cons
 - **Data Fetching/Caching**: SWR (local state only)
 - **Icons**: Ant Design Icons
 
+## Team Collaboration
+- Always document changes in your assigned log file (`backendCOBodega/docs/team/GEMINI_WORK_LOG.md` for Gemini or `CODEX_WORK_LOG.md` for Codex).
+
 ## Commands
 
 ```bash

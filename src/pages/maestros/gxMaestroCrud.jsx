@@ -369,8 +369,7 @@ const SpeciesRelations = ({ species, empCod, editable, onNotify }) => {
   const closeChildForm = () => setChildForm((current) => ({ ...current, open: false, row: null }));
 
   return (
-    <Box sx={{ mt: 3 }}>
-      <Divider />
+    <Box sx={{ mt: 3, p: { xs: 1.5, sm: 2.25 }, bgcolor: '#F8FBFF', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -596,8 +595,7 @@ const SingleDetailRelations = ({ parentCatalog, parent, empCod, editable, onNoti
   const optionSets = { [definition.optionSource]: [parent] };
 
   return (
-    <Box sx={{ mt: 3 }}>
-      <Divider />
+    <Box sx={{ mt: 3, p: { xs: 1.5, sm: 2.25 }, bgcolor: '#F8FBFF', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -1074,7 +1072,7 @@ const GxMaestroCrud = ({ catalogName }) => {
       {
         field: 'actions',
         headerName: 'Acciones',
-        width: 168,
+        width: config.allowDelete === false ? 116 : 168,
         sortable: false,
         filterable: false,
         disableColumnMenu: true,
@@ -1108,18 +1106,20 @@ const GxMaestroCrud = ({ catalogName }) => {
               </Button>
             </Tooltip>
 
-            <Tooltip title="Eliminar">
-              <Button
-                size="small"
-                variant="text"
-                color="error"
-                onClick={() => setDeleteRow(params.row)}
-                sx={{ minWidth: 36 }}
-                aria-label="Eliminar registro"
-              >
-                <DeleteOutlined />
-              </Button>
-            </Tooltip>
+            {config.allowDelete !== false && (
+              <Tooltip title="Eliminar">
+                <Button
+                  size="small"
+                  variant="text"
+                  color="error"
+                  onClick={() => setDeleteRow(params.row)}
+                  sx={{ minWidth: 36 }}
+                  aria-label="Eliminar registro"
+                >
+                  <DeleteOutlined />
+                </Button>
+              </Tooltip>
+            )}
           </Stack>
         )
       },
@@ -1132,7 +1132,7 @@ const GxMaestroCrud = ({ catalogName }) => {
         valueFormatter: (value) => formatCellValue(field, value)
       }))
     ],
-    [config.fields]
+    [config.allowDelete, config.fields]
   );
 
   const exportColumns = useMemo(
@@ -1302,8 +1302,8 @@ const GxMaestroCrud = ({ catalogName }) => {
         </Stack>
 
         <Stack direction="row" spacing={1} alignItems="center">
-          <Chip label={`Nivel GX ${config.level}`} size="small" variant="outlined" />
-          {config.parentTable && <Chip label={`Padre ${config.parentTable}`} size="small" variant="outlined" color="primary" />}
+          <Chip label={config.level === 2 ? 'Detalle de cabecera' : 'Cabecera'} size="small" variant="outlined" color="primary" />
+          {config.parentTable && config.level === 2 && <Chip label={`Contexto: ${config.parentTable}`} size="small" variant="outlined" />}
         </Stack>
 
         {!requiredFiltersReady && missingFilter && (
@@ -1397,7 +1397,7 @@ const GxMaestroCrud = ({ catalogName }) => {
         )}
       </Dialog>
 
-      <Dialog open={Boolean(deleteRow)} onClose={() => setDeleteRow(null)} fullWidth maxWidth="xs">
+      <Dialog open={config.allowDelete !== false && Boolean(deleteRow)} onClose={() => setDeleteRow(null)} fullWidth maxWidth="xs">
         <DialogTitle>Eliminar registro</DialogTitle>
 
         <Divider />

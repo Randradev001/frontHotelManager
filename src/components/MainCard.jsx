@@ -31,9 +31,9 @@ export default function MainCard({
       elevation={elevation || 0}
       sx={(theme) => ({
         position: 'relative',
-        ...(border && { border: `1px solid ${theme.vars.palette.grey['A800']}` }),
-        borderRadius: 1,
-        boxShadow: boxShadow && !border ? shadow || theme.vars.customShadows.z1 : 'inherit',
+        ...(border && { border: `1px solid ${theme.vars.palette.divider}` }),
+        borderRadius: 3,
+        boxShadow: boxShadow && !border ? shadow || theme.vars.customShadows.z1 : '0 10px 30px rgba(6, 27, 54, 0.05)',
         ':hover': { boxShadow: boxShadow ? shadow || theme.vars.customShadows.z1 : 'inherit' },
         ...(codeHighlight && {
           '& pre': { margin: 0, padding: '12px !important', fontFamily: theme.typography.fontFamily, fontSize: '0.75rem' }
@@ -54,7 +54,7 @@ export default function MainCard({
       {/* card header and action */}
       {!darkTitle && title && (
         <CardHeader
-          sx={{ p: 2.5 }}
+          sx={{ px: { xs: 2, sm: 2.75 }, py: 2.25 }}
           slotProps={{
             title: { variant: darkTitle ? 'h4' : 'subtitle1' },
             action: { sx: { m: '0px auto', alignSelf: 'center' } }

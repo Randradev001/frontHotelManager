@@ -25,21 +25,9 @@ import IconButton from 'components/@extended/IconButton';
 import AnimateButton from 'components/@extended/AnimateButton';
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
-import UserOutlined from '@ant-design/icons/UserOutlined';
+import MailOutlined from '@ant-design/icons/MailOutlined';
 import LockOutlined from '@ant-design/icons/LockOutlined';
 import ArrowRightOutlined from '@ant-design/icons/ArrowRightOutlined';
-
-const formatRut = (value) => {
-  const normalized = String(value || '')
-    .toUpperCase()
-    .replace(/[^0-9K]/g, '')
-    .slice(0, 10);
-  if (normalized.length <= 1) return normalized;
-
-  const body = normalized.slice(0, -1);
-  const verifier = normalized.slice(-1);
-  return `${body.replace(/\B(?=(\d{3})+(?!\d))/g, '.')}-${verifier}`;
-};
 
 export default function AuthLogin({ isDemo = false }) {
   const [remember, setRemember] = React.useState(false);
@@ -51,11 +39,15 @@ export default function AuthLogin({ isDemo = false }) {
 
   return (
     <Formik
-      initialValues={{ rut: '', password: '', empCod: '', submit: null }}
+      initialValues={{ email: '', password: '', empCod: '', submit: null }}
       validationSchema={Yup.object({
-        rut: Yup.string().trim().max(13, 'El RUT es demasiado extenso').required('El RUT es obligatorio'),
-        password: Yup.string().max(10, 'La clave admite hasta 10 caracteres durante la convivencia con GeneXus').required('La clave es obligatoria'),
-        empCod: companies.length ? Yup.number().required('Seleccione una empresa') : Yup.mixed()
+        email: Yup.string()
+          .trim()
+          .email('Enter a valid email address')
+          .max(80, 'Email can contain up to 80 characters')
+          .required('Email is required'),
+        password: Yup.string().max(10, 'The password can contain up to 10 characters').required('Password is required'),
+        empCod: companies.length ? Yup.number().required('Select a hotel') : Yup.mixed()
       })}
       onSubmit={async (values, { setErrors, setSubmitting }) => {
         try {
@@ -66,13 +58,13 @@ export default function AuthLogin({ isDemo = false }) {
           }
           navigate(location.state?.from?.pathname || '/', { replace: true });
         } catch (error) {
-          setErrors({ submit: error.response?.data?.message || 'No fue posible iniciar sesión.' });
+          setErrors({ submit: error.response?.data?.message || 'Unable to sign in.' });
         } finally {
           setSubmitting(false);
         }
       }}
     >
-      {({ errors, handleChange, handleSubmit, isSubmitting, setFieldTouched, setFieldValue, touched, values }) => (
+      {({ errors, handleChange, handleSubmit, isSubmitting, setFieldTouched, touched, values }) => (
         <form noValidate onSubmit={handleSubmit}>
           <Grid container spacing={2.5}>
             {errors.submit && (
@@ -82,32 +74,33 @@ export default function AuthLogin({ isDemo = false }) {
             )}
             <Grid size={12}>
               <Stack sx={{ gap: 1 }}>
-                <InputLabel htmlFor="user-rut">RUT</InputLabel>
+                <InputLabel htmlFor="user-email">Email address</InputLabel>
                 <OutlinedInput
-                  id="user-rut"
-                  name="rut"
-                  value={values.rut}
-                  onBlur={() => setFieldTouched('rut', true)}
-                  onChange={(event) => setFieldValue('rut', formatRut(event.target.value))}
-                  placeholder="12.345.678-5"
+                  id="user-email"
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  onBlur={() => setFieldTouched('email', true)}
+                  onChange={handleChange}
+                  placeholder="name@hotel.ca"
                   autoComplete="username"
-                  inputProps={{ maxLength: 13 }}
+                  inputProps={{ maxLength: 80 }}
                   disabled={companies.length > 0}
                   fullWidth
-                  error={Boolean(touched.rut && errors.rut)}
+                  error={Boolean(touched.email && errors.email)}
                   startAdornment={
                     <InputAdornment position="start">
-                      <UserOutlined aria-hidden="true" />
+                      <MailOutlined aria-hidden="true" />
                     </InputAdornment>
                   }
                   sx={{ height: 52, bgcolor: 'background.paper' }}
                 />
               </Stack>
-              {touched.rut && errors.rut && <FormHelperText error>{errors.rut}</FormHelperText>}
+              {touched.email && errors.email && <FormHelperText error>{errors.email}</FormHelperText>}
             </Grid>
             <Grid size={12}>
               <Stack sx={{ gap: 1 }}>
-                <InputLabel htmlFor="password-login">Clave</InputLabel>
+                <InputLabel htmlFor="password-login">Password</InputLabel>
                 <OutlinedInput
                   id="password-login"
                   name="password"
@@ -115,7 +108,7 @@ export default function AuthLogin({ isDemo = false }) {
                   onBlur={() => setFieldTouched('password', true)}
                   onChange={handleChange}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="Ingrese su clave"
+                  placeholder="Enter your password"
                   autoComplete="current-password"
                   inputProps={{ maxLength: 10 }}
                   disabled={companies.length > 0}
@@ -129,7 +122,7 @@ export default function AuthLogin({ isDemo = false }) {
                   endAdornment={
                     <InputAdornment position="end">
                       <IconButton
-                        aria-label={showPassword ? 'Ocultar clave' : 'Mostrar clave'}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
                         onClick={() => setShowPassword((visible) => !visible)}
                         onMouseDown={(event) => event.preventDefault()}
                         edge="end"
@@ -148,7 +141,7 @@ export default function AuthLogin({ isDemo = false }) {
             {companies.length > 0 && (
               <Grid size={12}>
                 <Stack sx={{ gap: 1 }}>
-                  <InputLabel id="company-login-label">Empresa</InputLabel>
+                  <InputLabel id="company-login-label">Hotel</InputLabel>
                   <Select
                     labelId="company-login-label"
                     id="company-login"
@@ -161,7 +154,7 @@ export default function AuthLogin({ isDemo = false }) {
                     sx={{ height: 52, bgcolor: 'background.paper' }}
                   >
                     <MenuItem value="" disabled>
-                      Seleccione una empresa
+                      Select a hotel
                     </MenuItem>
                     {companies.map((company) => (
                       <MenuItem key={company.empCod} value={company.empCod}>
@@ -184,7 +177,7 @@ export default function AuthLogin({ isDemo = false }) {
                     disabled={companies.length > 0}
                   />
                 }
-                label={<Typography variant="body2">Mantener la sesión iniciada</Typography>}
+                label={<Typography variant="body2">Keep me signed in</Typography>}
               />
             </Grid>
             <Grid size={12}>
@@ -198,13 +191,13 @@ export default function AuthLogin({ isDemo = false }) {
                   endIcon={!isSubmitting ? <ArrowRightOutlined /> : null}
                   sx={{ minHeight: 52, fontSize: '0.95rem' }}
                 >
-                  {isSubmitting ? <CircularProgress size={22} color="inherit" /> : companies.length ? 'Ingresar a la empresa' : 'Ingresar'}
+                  {isSubmitting ? <CircularProgress size={22} color="inherit" /> : companies.length ? 'Continue to hotel' : 'Sign in'}
                 </Button>
               </AnimateButton>
             </Grid>
             <Grid size={12}>
               <Typography variant="caption" color="text.secondary" sx={{ display: 'block', textAlign: 'center' }}>
-                ¿Necesita ayuda? Contacte al administrador de Seguridad.
+                Need help? Contact your system administrator.
               </Typography>
             </Grid>
           </Grid>

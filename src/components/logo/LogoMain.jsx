@@ -22,7 +22,7 @@ export default function LogoMain({ reverse = false }) {
             lineHeight: 0.92
           }}
         >
-          APERP
+          HM
         </Typography>
         <Typography
           component="span"
@@ -37,7 +37,7 @@ export default function LogoMain({ reverse = false }) {
             whiteSpace: 'nowrap'
           }}
         >
-          IMPULSANDO TU NEGOCIO
+          TASKMANAGER
         </Typography>
       </Box>
     </Stack>

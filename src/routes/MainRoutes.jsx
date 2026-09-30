@@ -4,12 +4,17 @@ import Loadable from 'components/Loadable';
 import DashboardLayout from 'layout/Dashboard';
 import ProtectedRoute from './ProtectedRoute';
 
-const DashboardDefault = Loadable(lazy(() => import('pages/dashboard/default')));
 const GxMaestroCrud = Loadable(lazy(() => import('pages/maestros/gxMaestroCrud')));
 const SecurityCatalogPage = Loadable(lazy(() => import('pages/seguridad/SecurityCatalogPage')));
 const SecurityCompositePage = Loadable(lazy(() => import('pages/seguridad/SecurityCompositePage')));
 const UserAssignmentsPage = Loadable(lazy(() => import('pages/seguridad/UserAssignmentsPage')));
 const UserAssignmentActionsPage = Loadable(lazy(() => import('pages/seguridad/UserAssignmentActionsPage')));
+const LocationsPage = Loadable(lazy(() => import('pages/hotel-manager/LocationsPage')));
+const CategoriesPage = Loadable(lazy(() => import('pages/hotel-manager/CategoriesPage')));
+const AssetsPage = Loadable(lazy(() => import('pages/hotel-manager/AssetsPage')));
+const WorkOrdersPage = Loadable(lazy(() => import('pages/hotel-manager/WorkOrdersPage')));
+const OperationsDashboard = Loadable(lazy(() => import('pages/hotel-manager/OperationsDashboard')));
+const WorkBoardPage = Loadable(lazy(() => import('pages/hotel-manager/WorkBoardPage')));
 
 const MainRoutes = {
   path: '/',
@@ -19,8 +24,8 @@ const MainRoutes = {
     </ProtectedRoute>
   ),
   children: [
-    { path: '/', element: <DashboardDefault /> },
-    { path: 'dashboard', children: [{ path: 'default', element: <DashboardDefault /> }] },
+    { path: '/', element: <OperationsDashboard /> },
+    { path: 'dashboard', children: [{ path: 'default', element: <OperationsDashboard /> }] },
     { path: 'maestros-gx/empresas', element: <GxMaestroCrud key="gx-empresas" catalogName="empresas" /> },
     { path: 'maestros-gx/temporadas', element: <GxMaestroCrud key="gx-temporadas" catalogName="temporadas" /> },
     { path: 'maestros-gx/tipos-familia', element: <GxMaestroCrud key="gx-tipos-familia" catalogName="tiposFamilia" /> },
@@ -61,7 +66,13 @@ const MainRoutes = {
       )
     },
     { path: 'seguridad/asignaciones', element: <UserAssignmentsPage /> },
-    { path: 'seguridad/asignaciones/acciones', element: <UserAssignmentActionsPage /> }
+    { path: 'seguridad/asignaciones/acciones', element: <UserAssignmentActionsPage /> },
+    { path: 'hotel-manager/dashboard', element: <OperationsDashboard /> },
+    { path: 'hotel-manager/work-board', element: <WorkBoardPage /> },
+    { path: 'hotel-manager/work-orders', element: <WorkOrdersPage /> },
+    { path: 'hotel-manager/locations', element: <LocationsPage /> },
+    { path: 'hotel-manager/categories', element: <CategoriesPage /> },
+    { path: 'hotel-manager/assets', element: <AssetsPage /> }
   ]
 };
 

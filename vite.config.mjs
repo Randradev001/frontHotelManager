@@ -37,10 +37,10 @@ export default defineConfig(({ mode }) => {
        VitePWA({  // congigure PWA plugin
             registerType: 'autoUpdate',
             manifest: {
-              name: 'APERP - Control de Bodega',
-              short_name: 'APERP',
-              description: 'Gestión multiempresa, seguridad y control de bodega',
-              theme_color: '#087DF1',
+              name: 'HM TaskManager',
+              short_name: 'HM Tasks',
+              description: 'Secure multi-hotel maintenance and operations management',
+              theme_color: '#12385D',
               background_color: '#F4F7FB',
               display: 'standalone',
               start_url: '/free/',

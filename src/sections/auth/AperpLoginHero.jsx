@@ -5,14 +5,15 @@ import Typography from '@mui/material/Typography';
 
 import CheckCircleOutlined from '@ant-design/icons/CheckCircleOutlined';
 import Logo from 'components/logo';
+import hotelLoginImage from 'assets/images/auth/hotel-taskmanager-login.png';
 
-const capabilities = ['Control multiempresa', 'Seguridad por roles', 'Operación trazable'];
+const capabilities = ['Multi-hotel operations', 'Role-based security', 'Auditable maintenance'];
 
 export default function AperpLoginHero() {
   return (
     <Box
       component="section"
-      aria-label="APERP, impulsando tu negocio"
+      aria-label="HM TaskManager hotel operations"
       sx={{
         position: 'relative',
         minHeight: '100dvh',
@@ -22,71 +23,44 @@ export default function AperpLoginHero() {
         justifyContent: 'space-between',
         p: { md: 5, lg: 7, xl: 8 },
         color: 'common.white',
-        background: 'linear-gradient(145deg, #0B559B 0%, #073D75 48%, #061B36 100%)'
+        backgroundImage: `linear-gradient(100deg, rgba(5,24,43,.96) 0%, rgba(6,35,60,.83) 42%, rgba(6,35,60,.22) 78%), url(${hotelLoginImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center center'
       }}
     >
       <Box
-        sx={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.38,
-          backgroundImage:
-            'radial-gradient(circle at 78% 20%, rgba(56,189,248,0.55), transparent 25%), radial-gradient(circle at 18% 84%, rgba(8,125,241,0.45), transparent 32%)'
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          width: '70%',
-          height: '150%',
-          top: '-28%',
-          right: '-48%',
-          transform: 'rotate(-14deg)',
-          bgcolor: 'rgba(255,255,255,0.08)',
-          borderLeft: '1px solid rgba(255,255,255,0.2)'
-        }}
-      />
-      <Box
-        sx={{
-          position: 'absolute',
-          width: 420,
-          height: 420,
-          right: -160,
-          bottom: -135,
-          border: '72px solid rgba(21,147,255,0.13)',
-          borderRadius: '50%'
-        }}
+        sx={{ position: 'absolute', inset: 0, background: 'linear-gradient(180deg, rgba(0,0,0,.18), transparent 35%, rgba(3,18,32,.52))' }}
       />
 
       <Box sx={{ position: 'relative', zIndex: 1 }}>
         <Logo reverse to="/login" sx={{ justifyContent: 'flex-start' }} />
       </Box>
 
-      <Stack spacing={3.25} sx={{ position: 'relative', zIndex: 1, maxWidth: 650 }}>
+      <Stack spacing={3.25} sx={{ position: 'relative', zIndex: 1, maxWidth: 610 }}>
         <Typography
           component="p"
-          sx={{ color: '#7DD3FC', fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}
+          sx={{ color: '#7FE1D1', fontSize: '0.76rem', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase' }}
         >
-          APERP · Control de Bodega
+          Hotel operations · Winnipeg
         </Typography>
         <Typography
           component="h1"
           sx={{
-            maxWidth: 610,
+            maxWidth: 600,
             color: 'common.white',
-            fontSize: { md: '3.35rem', lg: '4.55rem', xl: '5.25rem' },
+            fontSize: { md: '3.2rem', lg: '4.3rem', xl: '5rem' },
             fontWeight: 900,
-            lineHeight: 0.96,
+            lineHeight: 0.98,
             letterSpacing: '-0.045em'
           }}
         >
-          Impulsando
-          <Box component="span" sx={{ display: 'block', color: '#38BDF8' }}>
-            tu negocio.
+          Every task.
+          <Box component="span" sx={{ display: 'block', color: '#7FE1D1' }}>
+            One clear view.
           </Box>
         </Typography>
-        <Typography sx={{ maxWidth: 540, color: 'rgba(255,255,255,0.76)', fontSize: { md: '1rem', lg: '1.08rem' }, lineHeight: 1.7 }}>
-          Una experiencia renovada para gestionar personas, permisos y procesos operativos con el contexto de empresa siempre protegido.
+        <Typography sx={{ maxWidth: 535, color: 'rgba(255,255,255,.82)', fontSize: { md: '1rem', lg: '1.08rem' }, lineHeight: 1.7 }}>
+          Coordinate maintenance, assets, locations and hotel teams with secure, real-time operational visibility.
         </Typography>
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
           {capabilities.map((capability) => (
@@ -96,9 +70,10 @@ export default function AperpLoginHero() {
               label={capability}
               sx={{
                 color: 'common.white',
-                bgcolor: 'rgba(255,255,255,0.1)',
-                border: '1px solid rgba(255,255,255,0.15)',
-                '& .MuiChip-icon': { color: '#7DD3FC' }
+                bgcolor: 'rgba(255,255,255,.11)',
+                backdropFilter: 'blur(8px)',
+                border: '1px solid rgba(255,255,255,.16)',
+                '& .MuiChip-icon': { color: '#7FE1D1' }
               }}
             />
           ))}
@@ -106,11 +81,11 @@ export default function AperpLoginHero() {
       </Stack>
 
       <Stack direction="row" justifyContent="space-between" sx={{ position: 'relative', zIndex: 1 }}>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)' }}>
-          Gestión clara. Decisiones conectadas.
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,.68)' }}>
+          Built for better guest experiences.
         </Typography>
-        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.55)' }}>
-          APERP {new Date().getFullYear()}
+        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,.68)' }}>
+          HM TaskManager {new Date().getFullYear()}
         </Typography>
       </Stack>
     </Box>

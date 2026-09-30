@@ -1,13 +1,6 @@
 <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="aperp-favicon-gradient" x1="9" y1="6" x2="56" y2="59" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#1593FF"/>
-      <stop offset="1" stop-color="#0875E1"/>
-    </linearGradient>
-  </defs>
-  <rect x="3" y="3" width="58" height="58" rx="17" fill="url(#aperp-favicon-gradient)"/>
-  <rect x="14" y="17" width="36" height="32" rx="9" fill="#061B36"/>
-  <path d="M8 57L20 45L28 53L20 61H12C9.9 61 8.55 59.92 8 57Z" fill="#FFFFFF"/>
-  <path d="M17 50L47 20" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round"/>
-  <path d="M38 17L51 13L47 26L38 17Z" fill="#FFFFFF"/>
+  <defs><linearGradient id="hm-task-gradient" x1="8" y1="5" x2="58" y2="60" gradientUnits="userSpaceOnUse"><stop stop-color="#12385D"/><stop offset="1" stop-color="#0B7180"/></linearGradient></defs>
+  <rect x="3" y="3" width="58" height="58" rx="15" fill="url(#hm-task-gradient)"/>
+  <path d="M17 17V47M17 32H35M35 17V47" stroke="white" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M40 39L45 44L54 33" stroke="#7FE1D1" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

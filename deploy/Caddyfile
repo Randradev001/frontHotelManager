@@ -1,0 +1,26 @@
+:80 {
+    encode zstd gzip
+
+    handle /backendDocker/* {
+        reverse_proxy backend:3000
+    }
+
+    handle /ping {
+        reverse_proxy backend:3000
+    }
+
+    redir / /free/ 302
+    redir /free /free/ 308
+
+    handle /free/* {
+        root * /srv
+        try_files {path} /free/index.html
+        header /free/index.html Cache-Control "no-cache"
+        header /free/sw.js Cache-Control "no-cache"
+        file_server
+    }
+
+    handle {
+        respond "Not found" 404
+    }
+}

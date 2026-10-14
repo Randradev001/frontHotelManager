@@ -7,6 +7,7 @@ import path from 'path';
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const API_URL = env.VITE_APP_BASE_NAME || '/';
+  const appBasePath = `${API_URL.replace(/\/+$/, '')}/`;
   const PORT = 3000;
 
   return {
@@ -43,8 +44,8 @@ export default defineConfig(({ mode }) => {
               theme_color: '#12385D',
               background_color: '#F4F7FB',
               display: 'standalone',
-              start_url: '/free/',
-              scope: '/free/',
+              start_url: appBasePath,
+              scope: appBasePath,
               icons: [
                 {
                   src: 'favicon.svg',

@@ -1,0 +1,19 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "npm ci --include=optional",
+  "buildCommand": "VITE_APP_BASE_NAME=/ VITE_API_URL=/ npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    {
+      "source": "/((?!backendDocker(?:/|$)).*)",
+      "destination": "/index.html"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/backendDocker/:path*",
+      "headers": [{ "key": "Cache-Control", "value": "private, no-store" }]
+    }
+  ]
+}
